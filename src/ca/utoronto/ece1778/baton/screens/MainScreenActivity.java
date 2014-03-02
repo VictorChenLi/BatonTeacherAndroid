@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
@@ -52,6 +53,11 @@ public class MainScreenActivity extends FragmentActivity implements
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	
+	TextView tv_intent;
+	TextView tv_waitTime;
+	TextView tv_nickName;
+
 
 	private final BroadcastReceiver mHandleMessageReceiver = new TicketBroadcastReceiver();
 
@@ -59,7 +65,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_screen);
-
+//		findViews();
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -97,6 +103,13 @@ public class MainScreenActivity extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+	}
+	
+	private void findViews()
+	{
+		tv_intent = (TextView)findViewById(R.id.tv_intent);
+		tv_waitTime = (TextView) findViewById(R.id.tv_waitTime);
+		tv_nickName = (TextView) findViewById(R.id.tv_name);
 	}
 
 	@Override
@@ -204,16 +217,16 @@ public class MainScreenActivity extends FragmentActivity implements
 				 * Take appropriate action on this message depending upon your
 				 * app requirement For now i am just displaying it on the screen
 				 * */
+				tv_intent = (TextView)mViewPager.findViewById(R.id.tv_intent);
+				tv_waitTime = (TextView) mViewPager.findViewById(R.id.tv_waitTime);
+				tv_nickName = (TextView) mViewPager.findViewById(R.id.tv_name);
 				String newMessage = nickName +":"+ ticketType + ": " + ticketContent;
 				Log.i("MainScreenActivity", newMessage);
 				Toast.makeText(context, newMessage, Toast.LENGTH_LONG).show();
-				TextView tv_intent = (TextView) findViewById(R.id.tv_intent);
-				TextView tv_waitTime = (TextView) findViewById(R.id.tv_waitTime);
-				TextView tv_name = (TextView) findViewById(R.id.tv_name);
 				tv_intent.setText(ticketContent);
-				tv_name.setText(nickName);
+				tv_nickName.setText(nickName);
 				
-				
+				(new MainScreenActivity.WidgeUpdataTask(tv_waitTime)).execute(timeStamp);
 //				TextView m = (TextView) findViewById(R.id.lblMessage);
 //				m.append(newMessage);
 				// Releasing wake lock
@@ -224,13 +237,13 @@ public class MainScreenActivity extends FragmentActivity implements
 
 	}
 
-	protected class WidgeUpdataTask extends AsyncTask<String, Integer, String> {
+	protected class WidgeUpdataTask extends AsyncTask<String, Long, String> {
 
-		Context uiContext;
+		View uiView;
 		
-		public WidgeUpdataTask(Context context)
+		public WidgeUpdataTask(View view)
 		{
-			uiContext = context;
+			uiView= view;
 		}
 		
 		@Override
@@ -240,31 +253,42 @@ public class MainScreenActivity extends FragmentActivity implements
 			long curTime = System.currentTimeMillis();
 			while(curTime-startTime<3*30*1000)
 			{
-				if(curTime-startTime<30*1000)
-				{
-					setProgress(0x00CCFF);
-				}
-				else
-					if (curTime-startTime<2*30*1000)
-					{
-						setProgress(0xFFCC00);
-					}
-					else
-						if(curTime-startTime<3*30*1000)
-						{
-							setProgress(0xFF0000);
-						}
 				curTime = System.currentTimeMillis();
+				publishProgress(new Long[]{curTime-startTime});
+//				Integer[] colorCode = {0x00CCFF};
+//				publishProgress(colorCode);
+//				colorCode+=
+//				if(curTime-startTime<30*1000)
+//				{
+//					publishProgress(new Integer[]{0x00CCFF,(int) (curTime-startTime)});
+//				}
+//				else
+//					if (curTime-startTime<2*30*1000)
+//					{
+//						publishProgress(new Integer[]{0xFFCC00,(int) (curTime-startTime)});
+//					}
+//					else
+//						if(curTime-startTime<3*30*1000)
+//						{
+//							publishProgress(new Integer[]{0xFF0000,(int) (curTime-startTime)});
+//						}
+//				try {
+//					Thread.sleep(10*1000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 			return null;
 		}
 
 
 		@Override
-		protected void onProgressUpdate(Integer... values) {
+		protected void onProgressUpdate(Long... values) {
 			super.onProgressUpdate(values);
-			TextView tv_waitTime = (TextView) ((Activity)uiContext).findViewById(R.id.tv_waitTime);
-			tv_waitTime.setBackgroundColor(values[0]);
+			TextView tv_waitTime = (TextView)uiView;
+//			tv_waitTime.setBackgroundColor(values[0]);
+			tv_waitTime.setText(String.valueOf(values[0]/1000));
 		}
 		
 	}

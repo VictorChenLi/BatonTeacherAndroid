@@ -8,18 +8,18 @@
         android:id="@+id/tv_intent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text="text" />
 
     <TextView
         android:id="@+id/tv_waitTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text="text" />
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text="text" />
 
 </LinearLayout>

@@ -35,7 +35,7 @@ public class TalkTagFragment extends Fragment {
 			Bundle savedInstanceState) {
 		Log.i("TalkTagFragment","onCreatView called");
 		//TODO: replace the layout with your final one
-		View rootView = inflater.inflate(R.layout.activity_main, container,
+		View rootView = inflater.inflate(R.layout.fragment_talk_tab, container,
 				false);
 		/*
 		 * TextView dummyTextView = (TextView) rootView
@@ -43,9 +43,9 @@ public class TalkTagFragment extends Fragment {
 		 * dummyTextView.setText(Integer.toString(getArguments().getInt(
 		 * ARG_SECTION_NUMBER)));
 		 */
-		
-		lblMessage = (TextView) rootView.findViewById(R.id.lblMessage);
-		Log.i("TalkTagFragment",String.valueOf(lblMessage==null));
+//		
+//		lblMessage = (TextView) rootView.findViewById(R.id.lblMessage);
+//		Log.i("TalkTagFragment",String.valueOf(lblMessage==null));
 		return rootView;
 	}
 	
