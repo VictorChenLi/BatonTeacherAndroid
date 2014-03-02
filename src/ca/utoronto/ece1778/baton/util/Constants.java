@@ -2,10 +2,12 @@ package ca.utoronto.ece1778.baton.util;
 
 public final class Constants {
 	/**Baton sync server url */
-	public static final String SERVER_URL = "http://54.213.105.123:8080/BatonSyncServer";
-	//public static final String SERVER_URL = "http://138.51.54.84:8080/BatonSyncServer";
+//	public static final String SERVER_URL = "http://54.213.105.123:8080/BatonSyncServer";
+	public static final String SERVER_URL = "http://138.51.49.230:8080/BatonSyncServer";
 	/**Baton Google project id*/
 	public static final String SENDER_ID = "553157495789";
+	// For universal usage of time format
+	public static String DATE_FORMAT_LONG = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 	/**
 	 * name of intent filter, used when the GcmIntentService broadcast ticket
 	 * message to MainScreenActivity

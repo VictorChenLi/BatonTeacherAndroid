@@ -2,13 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="vertical">"
 
-    <ListView
-        android:id="@+id/talkListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-     >
-    </ListView>
+    <TextView
+        android:id="@+id/tv_intent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/tv_waitTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
 
 </LinearLayout>

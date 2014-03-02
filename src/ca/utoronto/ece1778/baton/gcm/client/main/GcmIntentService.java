@@ -22,6 +22,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import ca.utoronto.ece1778.baton.models.StudentProfile;
+import ca.utoronto.ece1778.baton.models.Ticket;
 import ca.utoronto.ece1778.baton.temp.MainActivity;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
@@ -79,16 +81,19 @@ public class GcmIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "onMessage called");
+		
 
-/**
- * 		TODO:   解析GCM消息类型， 发送一个广播消息， like：
- * 	
- */
-		String m1 = intent.getStringExtra(Constants.GCM_DATA_TICKET_CONTENT);
-		String m2 = intent.getStringExtra(Constants.GCM_DATA_TICKET_TYPE);
+		String ticketType = intent.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
+		String ticketContent = intent.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
+		String timeStamp = intent.getStringExtra(Ticket.TIMESTAMP_WEB_STR);
+		int uid = intent.getIntExtra(Ticket.UID_WEB_STR, 0);
+		String nickName=intent.getStringExtra(StudentProfile.POST_NICK_NAME);
 		Intent out = new Intent(Constants.DISPLAY_TICKET_ACTION);
-		out.putExtra(Constants.GCM_DATA_TICKET_CONTENT, m1);
-		out.putExtra(Constants.GCM_DATA_TICKET_TYPE, m2);
+		out.putExtra(Ticket.TICKETTYPE_WEB_STR, ticketType);
+		out.putExtra(Ticket.TICKETCONTENT_WEB_STR, ticketContent);
+		out.putExtra(Ticket.TIMESTAMP_WEB_STR, timeStamp);
+		out.putExtra(Ticket.UID_WEB_STR, uid);
+		out.putExtra(StudentProfile.POST_NICK_NAME, nickName);
 		context.sendBroadcast(out);
 
 	}

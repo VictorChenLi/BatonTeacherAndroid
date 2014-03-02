@@ -56,6 +56,7 @@ public class BatonServerCommunicator {
 		params.put(StudentProfile.POST_LAST_NAME, user.getLastName());
 		params.put(StudentProfile.POST_LOGIN_ID,user.getLoginID());
 		params.put(StudentProfile.POST_PASSWORD, user.getPassword());
+		params.put(StudentProfile.POST_USER_TYPE, "Teacher");
 
 		long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
 		// As the server might be down, we will retry it a couple

@@ -1,5 +1,10 @@
 package ca.utoronto.ece1778.baton.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -39,6 +44,19 @@ public class CommonUtilities {
 	public static String getMD5Str(String str) {
 		//TODO password MD5
 		return str;
+	}
+	
+	public static long getDataTime(String strTime)
+	{
+		Date parseDate=null;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_LONG);
+		try {
+			parseDate = simpleDateFormat.parse(strTime);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return parseDate.getTime();
 	}
 
 }

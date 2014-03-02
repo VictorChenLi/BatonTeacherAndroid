@@ -1,13 +1,16 @@
 package ca.utoronto.ece1778.baton.screens;
 
+import java.util.Date;
 import java.util.Locale;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -17,7 +20,11 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
+import android.widget.Toast;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
+import ca.utoronto.ece1778.baton.models.StudentProfile;
+import ca.utoronto.ece1778.baton.models.Ticket;
+import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 import ca.utoronto.ece1778.baton.util.WakeLocker;
 
@@ -45,19 +52,18 @@ public class MainScreenActivity extends FragmentActivity implements
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
-	
-	private final BroadcastReceiver mHandleMessageReceiver = new TicketBroadcastReceiver();
 
+	private final BroadcastReceiver mHandleMessageReceiver = new TicketBroadcastReceiver();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_screen);
-		
+
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		
+
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(
 				Constants.DISPLAY_TICKET_ACTION));
 
@@ -173,43 +179,100 @@ public class MainScreenActivity extends FragmentActivity implements
 			return null;
 		}
 	}
-	
+
 	class TicketBroadcastReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i("MainScreenActivity","onReceive Called");
-			String type = intent.getStringExtra(Constants.GCM_DATA_TICKET_TYPE);
-			Log.i("MainScreenActivity",type);
-			
-			//TODO: update talk tab and work tab according to the ticket type and its content here
-			if (type.equals(Constants.TICKET_TYPE_TALK)) {
+			Log.i("MainScreenActivity", "onReceive Called");
+			String ticketType = intent
+					.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
+			String ticketContent = intent
+					.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
+			String timeStamp = intent.getStringExtra(Ticket.TIMESTAMP_WEB_STR);
+			String nickName = intent.getStringExtra(StudentProfile.POST_NICK_NAME);
+			int uid = intent.getIntExtra(Ticket.UID_WEB_STR, 0);
+			Log.i("MainScreenActivity", ticketType + ticketContent + timeStamp);
+
+			// TODO: update talk tab and work tab according to the ticket type
+			// and its content here
+			if (ticketType.equals(Constants.TICKET_TYPE_TALK)) {
 				// Waking up mobile if it is sleeping
 				WakeLocker.acquire(getApplicationContext());
-				
+
 				/**
 				 * Take appropriate action on this message depending upon your
 				 * app requirement For now i am just displaying it on the screen
 				 * */
-				String newMessage = type
-						+ ": "
-						+ intent.getStringExtra(Constants.GCM_DATA_TICKET_CONTENT);
-				Log.i("MainScreenActivity",newMessage);
-				TextView m = (TextView)findViewById(R.id.lblMessage);
-                m.append(newMessage);
+				String newMessage = nickName +":"+ ticketType + ": " + ticketContent;
+				Log.i("MainScreenActivity", newMessage);
+				Toast.makeText(context, newMessage, Toast.LENGTH_LONG).show();
+				TextView tv_intent = (TextView) findViewById(R.id.tv_intent);
+				TextView tv_waitTime = (TextView) findViewById(R.id.tv_waitTime);
+				TextView tv_name = (TextView) findViewById(R.id.tv_name);
+				tv_intent.setText(ticketContent);
+				tv_name.setText(nickName);
+				
+				
+//				TextView m = (TextView) findViewById(R.id.lblMessage);
+//				m.append(newMessage);
 				// Releasing wake lock
 				WakeLocker.release();
 			}
 
 		}
-		
 
 	}
-	public void onPause(){
-		super.onPause();
-		Log.i("MainScreenActivity","onPause called");
+
+	protected class WidgeUpdataTask extends AsyncTask<String, Integer, String> {
+
+		Context uiContext;
+		
+		public WidgeUpdataTask(Context context)
+		{
+			uiContext = context;
+		}
+		
+		@Override
+		protected String doInBackground(String... arg0) {
+			String strTime=arg0[0];
+			long startTime = CommonUtilities.getDataTime(strTime);
+			long curTime = System.currentTimeMillis();
+			while(curTime-startTime<3*30*1000)
+			{
+				if(curTime-startTime<30*1000)
+				{
+					setProgress(0x00CCFF);
+				}
+				else
+					if (curTime-startTime<2*30*1000)
+					{
+						setProgress(0xFFCC00);
+					}
+					else
+						if(curTime-startTime<3*30*1000)
+						{
+							setProgress(0xFF0000);
+						}
+				curTime = System.currentTimeMillis();
+			}
+			return null;
+		}
+
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			TextView tv_waitTime = (TextView) ((Activity)uiContext).findViewById(R.id.tv_waitTime);
+			tv_waitTime.setBackgroundColor(values[0]);
+		}
+		
 	}
 	
+	public void onPause() {
+		super.onPause();
+		Log.i("MainScreenActivity", "onPause called");
+	}
 
 	@Override
 	public void onDestroy() {
@@ -221,7 +284,5 @@ public class MainScreenActivity extends FragmentActivity implements
 		}
 		super.onDestroy();
 	}
-
-	
 
 }
