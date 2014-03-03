@@ -287,7 +287,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		protected void onProgressUpdate(Long... values) {
 			super.onProgressUpdate(values);
 			TextView tv_waitTime = (TextView)uiView;
-//			tv_waitTime.setBackgroundColor(values[0]);
+			tv_waitTime.setBackgroundColor(getResources().getColor(R.color.common_signin_btn_text_dark));
 			tv_waitTime.setText(String.valueOf(values[0]/1000));
 		}
 		
