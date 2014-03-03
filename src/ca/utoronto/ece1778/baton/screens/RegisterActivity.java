@@ -56,15 +56,19 @@ public class RegisterActivity extends Activity implements OnClickListener {
 	EditText txtEmail;
 	EditText txtLoginID;
 	EditText txtPassword;
+	EditText txtConfirmPwd;
 	Button btnRegister;
 
+	String pw = null;
+	String con_pw = null;
+
 	String gcm_id;
-	
+
 	StudentProfile mStudentProfile = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		//Log.i(TAG, "RegisterActivity onCreate called");
+		// Log.i(TAG, "RegisterActivity onCreate called");
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_register);
@@ -86,8 +90,9 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		txtEmail = (EditText) findViewById(R.id.register_txtEmail);
 		txtLoginID = (EditText) findViewById(R.id.register_txtLoginID);
 		txtPassword = (EditText) findViewById(R.id.register_txtPassword);
+		txtConfirmPwd = (EditText) findViewById(R.id.register_txtConfirmPwd);
 		gcm_id = GCMRegistrar.getRegistrationId(getApplicationContext());
-		//Log.i(TAG, "on create gcm_id:" + gcm_id);
+		// Log.i(TAG, "on create gcm_id:" + gcm_id);
 
 		btnRegister = (Button) findViewById(R.id.register_btnRegister);
 		btnRegister.setOnClickListener(this);
@@ -97,38 +102,43 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		//Log.i(TAG, "RegisterActivity onClick called");
+		// Log.i(TAG, "RegisterActivity onClick called");
 
 		String fName = txtFirstName.getText().toString();
 		String lName = txtLastName.getText().toString();
 		String loginId = txtLoginID.getText().toString();
 		String email = txtEmail.getText().toString();
-		String pw = txtPassword.getText().toString();
+		pw = txtPassword.getText().toString();
+		con_pw = txtConfirmPwd.getText().toString();
 
-		mStudentProfile = new StudentProfile(fName, lName,
-				loginId, email, pw, gcm_id);
+		mStudentProfile = new StudentProfile(fName, lName, loginId, email, pw,
+				gcm_id);
 
-		//Log.i(TAG, "in on Click " + mStudentProfile.toString());
+		// Log.i(TAG, "in on Click " + mStudentProfile.toString());
 
 		// Check if user filled the form
-		if (isProfileCompleted(mStudentProfile)) {
-			//Log.i(TAG, "ProfileCompleted");
-			new AsyncRegisterTask()
-					.execute(new StudentProfile[] { mStudentProfile });
-
-		} else { // user doen't filled that data ask him to fill the form
+		if (!isProfileCompleted(mStudentProfile)) {
 			alert.showAlertDialog(RegisterActivity.this,
 					"Uncompleted information", "Please enter your details",
 					false);
+
+		} else if (!isPasswordMatch()) { // user doen't filled that data ask him
+											// to fill the form
+			Toast.makeText(this, "Password entered doesn't match.",
+					Toast.LENGTH_LONG).show();
+		} else {
+			// Log.i(TAG, "ProfileCompleted");
+			new AsyncRegisterTask()
+					.execute(new StudentProfile[] { mStudentProfile });
 		}
 
 	}
 
 	public void goToJoinPage() {
 		Intent i = new Intent(this, JoinActivity.class);
-	    i.putExtra(StudentProfile.POST_EMAIL, mStudentProfile.getEmail());
-	    //TODO dealing with MD5
-	    i.putExtra(StudentProfile.POST_PASSWORD, mStudentProfile.getPassword());
+		i.putExtra(StudentProfile.POST_EMAIL, mStudentProfile.getEmail());
+		// TODO dealing with MD5
+		i.putExtra(StudentProfile.POST_PASSWORD, mStudentProfile.getPassword());
 		startActivity(i);
 		finish();
 	}
@@ -139,6 +149,12 @@ public class RegisterActivity extends Activity implements OnClickListener {
 				&& user.getGcm_id().trim().length() > 0
 				&& user.getLastName().trim().length() > 0
 				&& user.getPassword().trim().length() > 0)
+			return true;
+		return false;
+	}
+	
+	private boolean isPasswordMatch() {
+		if (pw.equals(con_pw))
 			return true;
 		return false;
 	}
@@ -164,7 +180,8 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		@Override
 		protected String doInBackground(StudentProfile... users) {
 			StudentProfile u = users[0];
-			//String result = BatonServerCommunicator.REPLY_MESSAGE_REGISTER_SUCCESS;
+			// String result =
+			// BatonServerCommunicator.REPLY_MESSAGE_REGISTER_SUCCESS;
 			String result = BatonServerCommunicator.register(
 					getApplicationContext(), u);
 			return result;
