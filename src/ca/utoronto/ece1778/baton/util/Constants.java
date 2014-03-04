@@ -2,8 +2,8 @@ package ca.utoronto.ece1778.baton.util;
 
 public final class Constants {
 	/**Baton sync server url */
-//	public static final String SERVER_URL = "http://54.213.105.123:8080/BatonSyncServer";
-	public static final String SERVER_URL = "http://138.51.59.55:8080/BatonSyncServer";
+	public static final String SERVER_URL = "http://54.213.105.123:8080/BatonSyncServer";
+	//public static final String SERVER_URL = "http://138.51.59.55:8080/BatonSyncServer";
 	/**Baton Google project id*/
 	public static final String SENDER_ID = "553157495789";
 	// For universal usage of time format
@@ -13,6 +13,10 @@ public final class Constants {
 	 * message to MainScreenActivity
 	 */
 	public static final String DISPLAY_TICKET_ACTION = "/ca.utoronto.ece1778.baton.DISPLAY_TICKET";
+	
+	/**path for Typeface assets*/
+	public final static String TYPEFACE_COMIC_RELIEF = "fonts/ComicRelief.ttf";
+	public final static String TYPEFACE_ACTION_MAN_BOLD = "fonts/Action_Man_Bold.ttf";
 
 	//TODO: use these constants in message exchange between server and clients
 	public static final String GCM_DATA = "data" ;

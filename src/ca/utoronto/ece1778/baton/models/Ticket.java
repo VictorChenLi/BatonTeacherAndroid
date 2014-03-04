@@ -11,6 +11,11 @@ public class Ticket {
 	public static final String TICKETCONTENT_WEB_STR = "ticketContent";
 	public static final String TIMESTAMP_WEB_STR = "timeStamp";
 	
+	public static final String TICK_TALK_BUILD = "talk_build";
+	public static final String TICK_TALK_QUEST = "talk_question";
+	public static final String TICK_TALK_NEW_IDEA = "talk_new_idea";
+	public static final String TICK_TALK_CHALLENGE = "talk_challenge";
+	
 	private int tid;
 	private int uid;
 	private String ticketType;

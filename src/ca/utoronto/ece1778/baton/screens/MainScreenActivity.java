@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
 import ca.utoronto.ece1778.baton.models.StudentProfile;
+import ca.utoronto.ece1778.baton.models.TalkTicket;
 import ca.utoronto.ece1778.baton.models.Ticket;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
@@ -105,13 +106,6 @@ public class MainScreenActivity extends FragmentActivity implements
 		}
 	}
 	
-	private void findViews()
-	{
-		tv_intent = (TextView)findViewById(R.id.tv_intent);
-		tv_waitTime = (TextView) findViewById(R.id.tv_waitTime);
-		tv_nickName = (TextView) findViewById(R.id.tv_name);
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -202,6 +196,15 @@ public class MainScreenActivity extends FragmentActivity implements
 					.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
 			String ticketContent = intent
 					.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
+			if(ticketContent.equals(Ticket.TICK_TALK_BUILD)){
+				ticketContent = "Build";
+			}else if(ticketContent.equals(Ticket.TICK_TALK_CHALLENGE)){
+				ticketContent = "Challenge";
+			}else if(ticketContent.equals(Ticket.TICK_TALK_NEW_IDEA)){
+				ticketContent = "New Idea";
+			}else if(ticketContent.equals(Ticket.TICK_TALK_QUEST)){
+				ticketContent = "Question";
+			}
 			String timeStamp = intent.getStringExtra(Ticket.TIMESTAMP_WEB_STR);
 			String nickName = intent.getStringExtra(StudentProfile.POST_NICK_NAME);
 			int uid = intent.getIntExtra(Ticket.UID_WEB_STR, 0);
@@ -222,7 +225,7 @@ public class MainScreenActivity extends FragmentActivity implements
 				tv_nickName = (TextView) mViewPager.findViewById(R.id.tv_name);
 				String newMessage = nickName +":"+ ticketType + ": " + ticketContent;
 				Log.i("MainScreenActivity", newMessage);
-				Toast.makeText(context, newMessage, Toast.LENGTH_LONG).show();
+				//Toast.makeText(context, newMessage, Toast.LENGTH_LONG).show();
 				tv_intent.setText(ticketContent);
 				tv_nickName.setText(nickName);
 				
