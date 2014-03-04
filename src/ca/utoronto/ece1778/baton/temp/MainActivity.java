@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
 	// label to display gcm messages
 	TextView lblMessage;
 
+	//change here...
 	// Asyntask
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
