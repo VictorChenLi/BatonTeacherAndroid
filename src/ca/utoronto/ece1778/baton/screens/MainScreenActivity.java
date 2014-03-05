@@ -254,7 +254,7 @@ public class MainScreenActivity extends FragmentActivity implements
 			String strTime=arg0[0];
 			long startTime = CommonUtilities.getDataTime(strTime);
 			long curTime = System.currentTimeMillis();
-			while(curTime-startTime<3*30*1000)
+			while(curTime-startTime<3000*1000)
 			{
 				curTime = System.currentTimeMillis();
 				publishProgress(new Long[]{curTime-startTime});
@@ -290,7 +290,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		protected void onProgressUpdate(Long... values) {
 			super.onProgressUpdate(values);
 			TextView tv_waitTime = (TextView)uiView;
-			tv_waitTime.setBackgroundColor(getResources().getColor(R.color.common_signin_btn_text_dark));
+//			tv_waitTime.setBackgroundColor(getResources().getColor(R.color.common_signin_btn_text_dark));
 			tv_waitTime.setText(String.valueOf(values[0]/1000));
 		}
 		
