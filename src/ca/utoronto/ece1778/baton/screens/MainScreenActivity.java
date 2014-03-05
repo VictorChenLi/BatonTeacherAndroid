@@ -1,10 +1,8 @@
 package ca.utoronto.ece1778.baton.screens;
 
-import java.util.Date;
 import java.util.Locale;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,10 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
 import ca.utoronto.ece1778.baton.models.StudentProfile;
-import ca.utoronto.ece1778.baton.models.TalkTicket;
 import ca.utoronto.ece1778.baton.models.Ticket;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;

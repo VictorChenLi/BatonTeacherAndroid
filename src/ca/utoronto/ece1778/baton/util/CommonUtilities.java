@@ -2,11 +2,9 @@ package ca.utoronto.ece1778.baton.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import android.content.Context;
-import android.content.Intent;
 
 public class CommonUtilities {
 

@@ -13,9 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
-import ca.utoronto.ece1778.baton.models.StudentProfile;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
-import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
 import com.google.android.gcm.GCMRegistrar;
@@ -110,7 +108,7 @@ public class WelcomeActivity extends Activity {
 		builder.setIcon(R.drawable.ic_launcher);
 		builder.setTitle("Network Info");
 		builder.setMessage("Network is unavailable on your phone.");
-		builder.setPositiveButton("Setting", new OnClickListener() {
+		builder.setPositiveButton("Network Setting", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Intent intent = null;
