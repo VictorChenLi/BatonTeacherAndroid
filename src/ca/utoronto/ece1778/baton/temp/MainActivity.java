@@ -11,12 +11,8 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
-import ca.utoronto.ece1778.baton.gcm.client.main.R.id;
-import ca.utoronto.ece1778.baton.gcm.client.main.R.layout;
-import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 import ca.utoronto.ece1778.baton.syncserver.InternetConnectionDetector;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
-import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 import ca.utoronto.ece1778.baton.util.WakeLocker;
 
