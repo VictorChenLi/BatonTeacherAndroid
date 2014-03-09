@@ -27,11 +27,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
-import ca.utoronto.ece1778.baton.models.StudentProfile;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
 import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 import ca.utoronto.ece1778.baton.syncserver.InternetConnectionDetector;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
 
+import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
 
 /**
@@ -64,7 +65,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
 	String gcm_id;
 
-	StudentProfile mStudentProfile = null;
+	UserProfile mStudentProfile = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -111,9 +112,9 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		pw = txtPassword.getText().toString();
 		con_pw = txtConfirmPwd.getText().toString();
 
-		mStudentProfile = new StudentProfile(fName, lName, loginId, email, pw,
-				gcm_id);
-
+		mStudentProfile = new UserProfile(gcm_id, loginId, email, pw, fName,
+				lName, UserProfile.USERTYPE_STUDENT);
+		
 		// Log.i(TAG, "in on Click " + mStudentProfile.toString());
 
 		// Check if user filled the form
@@ -129,25 +130,25 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		} else {
 			// Log.i(TAG, "ProfileCompleted");
 			new AsyncRegisterTask()
-					.execute(new StudentProfile[] { mStudentProfile });
+					.execute(new UserProfile[] { mStudentProfile });
 		}
 
 	}
 
 	public void goToJoinPage() {
 		Intent i = new Intent(this, JoinActivity.class);
-		i.putExtra(StudentProfile.POST_EMAIL, mStudentProfile.getEmail());
+		i.putExtra(UserProfile.EMAIL_WEB_STR, mStudentProfile.getEmail());
 		// TODO dealing with MD5
-		i.putExtra(StudentProfile.POST_PASSWORD, mStudentProfile.getPassword());
+		i.putExtra(UserProfile.PASSWORD_WEB_STR, mStudentProfile.getPassword());
 		startActivity(i);
 		finish();
 	}
 
-	private boolean isProfileCompleted(final StudentProfile user) {
+	private boolean isProfileCompleted(final UserProfile user) {
 		if (user.getEmail().trim().length() > 0
-				&& user.getFirstName().trim().length() > 0
-				&& user.getGcm_id().trim().length() > 0
-				&& user.getLastName().trim().length() > 0
+				&& user.getF_name().trim().length() > 0
+				&& user.getGcm_regid().trim().length() > 0
+				&& user.getL_name().trim().length() > 0
 				&& user.getPassword().trim().length() > 0)
 			return true;
 		return false;
@@ -166,7 +167,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 	 * information that is passed when the task is completed to the post-task
 	 * code
 	 */
-	class AsyncRegisterTask extends AsyncTask<StudentProfile, Void, String> {
+	class AsyncRegisterTask extends AsyncTask<UserProfile, Void, String> {
 		@Override
 		protected void onPreExecute() {
 			// System.out.println("onPreExecute() called");
@@ -178,8 +179,8 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		}
 
 		@Override
-		protected String doInBackground(StudentProfile... users) {
-			StudentProfile u = users[0];
+		protected String doInBackground(UserProfile... users) {
+			UserProfile u = users[0];
 			// String result =
 			// BatonServerCommunicator.REPLY_MESSAGE_REGISTER_SUCCESS;
 			String result = BatonServerCommunicator.register(

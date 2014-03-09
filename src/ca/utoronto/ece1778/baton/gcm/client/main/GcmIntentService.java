@@ -19,11 +19,13 @@ package ca.utoronto.ece1778.baton.gcm.client.main;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import ca.utoronto.ece1778.baton.models.StudentProfile;
-import ca.utoronto.ece1778.baton.models.Ticket;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
+//import ca.utoronto.ece1778.baton.models.Ticket;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
+import com.baton.publiclib.model.ticketmanage.Ticket;
+import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMBaseIntentService;
 
 /**
@@ -83,13 +85,13 @@ public class GcmIntentService extends GCMBaseIntentService {
 		String ticketContent = intent.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
 		String timeStamp = intent.getStringExtra(Ticket.TIMESTAMP_WEB_STR);
 		int uid = intent.getIntExtra(Ticket.UID_WEB_STR, 0);
-		String nickName=intent.getStringExtra(StudentProfile.POST_NICK_NAME);
+		String loginId=intent.getStringExtra(UserProfile.LOGINID_WEB_STR);
 		Intent out = new Intent(Constants.DISPLAY_TICKET_ACTION);
 		out.putExtra(Ticket.TICKETTYPE_WEB_STR, ticketType);
 		out.putExtra(Ticket.TICKETCONTENT_WEB_STR, ticketContent);
 		out.putExtra(Ticket.TIMESTAMP_WEB_STR, timeStamp);
 		out.putExtra(Ticket.UID_WEB_STR, uid);
-		out.putExtra(StudentProfile.POST_NICK_NAME, nickName);
+		out.putExtra(UserProfile.LOGINID_WEB_STR, loginId);
 		context.sendBroadcast(out);
 
 	}

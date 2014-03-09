@@ -15,10 +15,11 @@ import java.util.Random;
 import android.content.Context;
 import android.util.Log;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
-import ca.utoronto.ece1778.baton.models.StudentProfile;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
+import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
 
 /**
@@ -44,19 +45,19 @@ public class BatonServerCommunicator {
 	/**
 	 * Register user on the server.
 	 */
-	public static String register(final Context context,final StudentProfile user) {
+	public static String register(final Context context,final UserProfile user) {
 		Log.i(TAG, "registering user:");
 		Log.i(TAG, user.toString());
 		
 		String serverUrl = Constants.SERVER_URL + "/register?";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put(StudentProfile.POST_GCM_ID, user.getGcm_id());
-		params.put(StudentProfile.POST_EMAIL, user.getEmail());
-		params.put(StudentProfile.POST_FIRST_NAME, user.getFirstName());
-		params.put(StudentProfile.POST_LAST_NAME, user.getLastName());
-		params.put(StudentProfile.POST_LOGIN_ID,user.getLoginID());
-		params.put(StudentProfile.POST_PASSWORD, user.getPassword());
-		params.put(StudentProfile.POST_USER_TYPE, "Teacher");
+		params.put(UserProfile.GCMID_WEB_STR, user.getGcm_regid());
+		params.put(UserProfile.EMAIL_WEB_STR, user.getEmail());
+		params.put(UserProfile.FNAME_WEB_STR, user.getF_name());
+		params.put(UserProfile.LNAME_WEB_STR, user.getL_name());
+		params.put(UserProfile.LOGINID_WEB_STR,user.getLogin_id());
+		params.put(UserProfile.PASSWORD_WEB_STR, user.getPassword());
+		params.put(UserProfile.USERTYPE_WEB_STR, UserProfile.USERTYPE_STUDENT);
 
 		long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
 		// As the server might be down, we will retry it a couple
@@ -108,10 +109,10 @@ public class BatonServerCommunicator {
 		
 		String serverUrl = Constants.SERVER_URL + "/login?";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put(StudentProfile.POST_EMAIL, token[0]);
+		params.put(UserProfile.EMAIL_WEB_STR, token[0]);
 		params.put(POST_CLASSROOM, token[1]);
-		params.put(StudentProfile.POST_PASSWORD, token[2]);
-		params.put(StudentProfile.POST_GCM_ID, GCMRegistrar.getRegistrationId(context));
+		params.put(UserProfile.PASSWORD_WEB_STR, token[2]);
+		params.put(UserProfile.GCMID_WEB_STR, GCMRegistrar.getRegistrationId(context));
 
 		long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
 		// As the server might be down, we will retry it a couple
@@ -157,12 +158,12 @@ public class BatonServerCommunicator {
 	/**
 	 * Unregister this account/device pair within the server.
 	 */
-	public static void unregister(final Context context, final StudentProfile user) {
+	public static void unregister(final Context context, final UserProfile user) {
 		Log.i(TAG, "unregistering user");
 		String serverUrl = Constants.SERVER_URL + "/unregister?";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put(StudentProfile.POST_GCM_ID, user.getGcm_id());
-		params.put(StudentProfile.POST_EMAIL, user.getEmail());
+		params.put(UserProfile.GCMID_WEB_STR, user.getGcm_regid());
+		params.put(UserProfile.EMAIL_WEB_STR, user.getEmail());
 		try {
 			post(serverUrl, params);
 			GCMRegistrar.setRegisteredOnServer(context, false);

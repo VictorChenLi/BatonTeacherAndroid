@@ -20,12 +20,14 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
-import ca.utoronto.ece1778.baton.models.StudentProfile;
-import ca.utoronto.ece1778.baton.models.Ticket;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
+//import ca.utoronto.ece1778.baton.models.Ticket;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 import ca.utoronto.ece1778.baton.util.WakeLocker;
 
+import com.baton.publiclib.model.ticketmanage.Ticket;
+import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
 
 /**
@@ -192,23 +194,23 @@ public class MainScreenActivity extends FragmentActivity implements
 					.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
 			String ticketContent = intent
 					.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
-			if(ticketContent.equals(Ticket.TICK_TALK_BUILD)){
-				ticketContent = "Build";
-			}else if(ticketContent.equals(Ticket.TICK_TALK_CHALLENGE)){
-				ticketContent = "Challenge";
-			}else if(ticketContent.equals(Ticket.TICK_TALK_NEW_IDEA)){
-				ticketContent = "New Idea";
-			}else if(ticketContent.equals(Ticket.TICK_TALK_QUEST)){
-				ticketContent = "Question";
+			if(ticketContent.equals(Ticket.TALK_INTENT_BUILD_WEB_STR)){
+				ticketContent = context.getString(R.string.talk_intent_build);
+			}else if(ticketContent.equals(Ticket.TALK_INTENT_CHALLENGE_WEB_STR)){
+				ticketContent = context.getString(R.string.talk_intent_challenge);
+			}else if(ticketContent.equals(Ticket.TALK_INTENT_NEWIDEA_WEB_STR)){
+				ticketContent = context.getString(R.string.talk_intent_new_idea);
+			}else if(ticketContent.equals(Ticket.TALK_INTENT_QUESTION_WEB_STR)){
+				ticketContent = context.getString(R.string.talk_intent_question);
 			}
 			String timeStamp = intent.getStringExtra(Ticket.TIMESTAMP_WEB_STR);
-			String nickName = intent.getStringExtra(StudentProfile.POST_NICK_NAME);
+			String loginId = intent.getStringExtra(UserProfile.LOGINID_WEB_STR);
 			int uid = intent.getIntExtra(Ticket.UID_WEB_STR, 0);
 			Log.i("MainScreenActivity", ticketType + ticketContent + timeStamp);
 
 			// TODO: update talk tab and work tab according to the ticket type
 			// and its content here
-			if (ticketType.equals(Constants.TICKET_TYPE_TALK)) {
+			if (ticketType.equals(Ticket.TICKET_TYPE_TALK)) {
 				// Waking up mobile if it is sleeping
 				WakeLocker.acquire(getApplicationContext());
 
@@ -219,11 +221,11 @@ public class MainScreenActivity extends FragmentActivity implements
 				tv_intent = (TextView)mViewPager.findViewById(R.id.tv_intent);
 				tv_waitTime = (TextView) mViewPager.findViewById(R.id.tv_waitTime);
 				tv_nickName = (TextView) mViewPager.findViewById(R.id.tv_name);
-				String newMessage = nickName +":"+ ticketType + ": " + ticketContent;
+				String newMessage = loginId +":"+ ticketType + ": " + ticketContent;
 				Log.i("MainScreenActivity", newMessage);
 				//Toast.makeText(context, newMessage, Toast.LENGTH_LONG).show();
 				tv_intent.setText(ticketContent);
-				tv_nickName.setText(nickName);
+				tv_nickName.setText(loginId);
 				
 				(new MainScreenActivity.WidgeUpdataTask(tv_waitTime)).execute(timeStamp);
 //				TextView m = (TextView) findViewById(R.id.lblMessage);

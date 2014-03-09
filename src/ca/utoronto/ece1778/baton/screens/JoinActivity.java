@@ -15,6 +15,8 @@
  */
 package ca.utoronto.ece1778.baton.screens;
 
+import com.baton.publiclib.model.usermanage.UserProfile;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -27,7 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
-import ca.utoronto.ece1778.baton.models.StudentProfile;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
 import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
 
@@ -68,8 +70,8 @@ public class JoinActivity extends Activity implements OnClickListener {
 
 		/*in case the previous context is RegisterActivity*/
 		Intent intent = this.getIntent();
-		String email = intent.getStringExtra(StudentProfile.POST_EMAIL);
-		String pwd = intent.getStringExtra(StudentProfile.POST_PASSWORD);
+		String email = intent.getStringExtra(UserProfile.EMAIL_WEB_STR);
+		String pwd = intent.getStringExtra(UserProfile.EMAIL_WEB_STR);
 		if (email != null && !email.equals("")) {
 			txtEmail.setText(email);
 		}
