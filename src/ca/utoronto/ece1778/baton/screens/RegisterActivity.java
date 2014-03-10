@@ -20,6 +20,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -92,7 +93,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		txtPassword = (EditText) findViewById(R.id.register_txtPassword);
 		txtConfirmPwd = (EditText) findViewById(R.id.register_txtConfirmPwd);
 		gcm_id = GCMRegistrar.getRegistrationId(getApplicationContext());
-		// Log.i(TAG, "on create gcm_id:" + gcm_id);
+		Log.i(TAG, "on create gcm_id:" + gcm_id);
 
 		btnRegister = (Button) findViewById(R.id.register_btnRegister);
 		btnRegister.setOnClickListener(this);

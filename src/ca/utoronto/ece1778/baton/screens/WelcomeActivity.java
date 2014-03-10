@@ -13,7 +13,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import ca.utoronto.ece1778.baton.gcm.client.main.R;
+import ca.utoronto.ece1778.baton.models.StudentProfile;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
+import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
 import com.google.android.gcm.GCMRegistrar;
@@ -33,6 +35,8 @@ public class WelcomeActivity extends Activity {
 
 	// Alert dialog manager
 	AlertDialogManager alert = new AlertDialogManager();
+	
+	AlertDialog dialog ;
 
 	ConnectivityManager manager;
 
@@ -46,9 +50,9 @@ public class WelcomeActivity extends Activity {
 	}
 
 	@Override
-	protected void onStart() {
-		Log.i("WelcomActivity", "onStart Called");
-		super.onStart();
+	protected void onResume() {
+		Log.i("WelcomActivity", "onResume Called");
+		super.onResume();
 
 		// Check if GCM configuration is set
 		if (Constants.SERVER_URL == null || Constants.SENDER_ID == null
@@ -113,20 +117,19 @@ public class WelcomeActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				Intent intent = null;
 				/**
-				 * 判断手机系统的版本！如果API大于10 就是3.0+ 因为3.0以上的版本的设置和3.0以下的设置不一样，调用的方法不同
+				 * 判断手机系统的版本,如果API大于10 就是3.0+ 因为3.0以上的版本的设置和3.0以下的设置不一样，调用的方法不同
 				 */
 				if (android.os.Build.VERSION.SDK_INT > 10) {
 					intent = new Intent(
-							android.provider.Settings.ACTION_WIFI_SETTINGS);
+							android.provider.Settings.ACTION_SETTINGS);
 				} else {
 					intent = new Intent();
 					ComponentName component = new ComponentName(
 							"com.android.settings",
-							"com.android.settings.WirelessSettings");
+							"com.android.settings.Settings");//WirelessSettings
 					intent.setComponent(component);
 					intent.setAction("android.intent.action.VIEW");
 				}
-				dialog.dismiss();
 				startActivity(intent);
 			}
 		});
@@ -134,11 +137,10 @@ public class WelcomeActivity extends Activity {
 		builder.setNegativeButton("Exit Baton", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
 				WelcomeActivity.this.finish();
 			}
 		});
-		AlertDialog dialog = builder.create();
+		dialog = builder.create();
 		dialog.show();
 	}
 
@@ -150,7 +152,6 @@ public class WelcomeActivity extends Activity {
 		builder.setPositiveButton("Continue", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
 				Log.i("WelcomActivity","continue to use data package");
 				go();
 			}
@@ -159,11 +160,10 @@ public class WelcomeActivity extends Activity {
 		builder.setNegativeButton("Exit Baton", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
 				WelcomeActivity.this.finish();
 			}
 		});
-		AlertDialog dialog = builder.create();
+		dialog = builder.create();
 		dialog.show();
 	}
 
@@ -178,8 +178,9 @@ public class WelcomeActivity extends Activity {
 		}
 		// go to the join page
 		Intent intent = new Intent(this, JoinActivity.class);
+		WelcomeActivity.this.finish();
 		startActivity(intent); 
-		this.finish();
+
 	}
 
 	@Override
@@ -196,7 +197,8 @@ public class WelcomeActivity extends Activity {
 	@Override
 	protected void onPause() {
 		Log.i("WelcomActivity", "onPause Called");
-
+        if(dialog!=null)
+        	dialog.dismiss();
 		super.onPause();
 	}
 

@@ -67,10 +67,7 @@
             android:name="ca.utoronto.ece1778.baton.screens.WelcomeActivity"
             android:launchMode="singleTop" 
             android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
 
         <!-- Main Activity, about to deprecated -->
@@ -93,6 +90,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
+            
         </activity>
 
         <!-- MainScreen Activity, about to deprecated -->
@@ -101,6 +99,10 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name" 
             android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!--

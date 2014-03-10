@@ -24,15 +24,10 @@
     <string name="options_clear">Clear</string>
     <string name="options_exit">Exit</string>
 
-    <string-array name="intent_array">
-        <item>Build</item>
-        <item>Questions</item>
-        <item>Challenge</item>
-        <item>New Ideas</item>
-    </string-array>
-
     <string name="title_section1">Talk</string>
     <string name="title_section2">Work</string>
-    <string name="title_section3">Profile</string>
+    <string name="log_out">Log out</string>
+    <string name="about">About Baton</string>
+    <string name="user_profile">Profile</string>
 
 </resources>
