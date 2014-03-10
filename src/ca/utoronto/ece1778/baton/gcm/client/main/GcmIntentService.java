@@ -19,14 +19,15 @@ package ca.utoronto.ece1778.baton.gcm.client.main;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-//import ca.utoronto.ece1778.baton.models.StudentProfile;
-//import ca.utoronto.ece1778.baton.models.Ticket;
+import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
 import com.baton.publiclib.model.ticketmanage.Ticket;
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMBaseIntentService;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
+//import ca.utoronto.ece1778.baton.models.Ticket;
 
 /**
  * This {@code IntentService} does the actual handling of the GCM message.

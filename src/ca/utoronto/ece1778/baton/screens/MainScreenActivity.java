@@ -19,9 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
-import ca.utoronto.ece1778.baton.gcm.client.main.R;
-//import ca.utoronto.ece1778.baton.models.StudentProfile;
-//import ca.utoronto.ece1778.baton.models.Ticket;
+import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 import ca.utoronto.ece1778.baton.util.WakeLocker;
@@ -29,6 +27,8 @@ import ca.utoronto.ece1778.baton.util.WakeLocker;
 import com.baton.publiclib.model.ticketmanage.Ticket;
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
+//import ca.utoronto.ece1778.baton.models.Ticket;
 
 /**
  * 

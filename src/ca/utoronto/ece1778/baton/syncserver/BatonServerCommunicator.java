@@ -14,13 +14,13 @@ import java.util.Random;
 
 import android.content.Context;
 import android.util.Log;
-import ca.utoronto.ece1778.baton.gcm.client.main.R;
-//import ca.utoronto.ece1778.baton.models.StudentProfile;
+import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
 
 /**
  * 
@@ -119,7 +119,7 @@ public class BatonServerCommunicator {
 		// times.
 		for (int i = 1; i <= MAX_ATTEMPTS; i++) {
 			//TODO: need to deal with different codes and give user appropriate feedback
-			Log.d(TAG, "Attempt #" + i + " to register");
+			Log.d(TAG, "Attempt #" + i + " to login");
 			try {
 				/*CommonUtilities.displayMessage(context, context.getString(
 						R.string.server_registering, i, MAX_ATTEMPTS));*/

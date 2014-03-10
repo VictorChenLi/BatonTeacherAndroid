@@ -20,20 +20,21 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import ca.utoronto.ece1778.baton.gcm.client.main.R;
-//import ca.utoronto.ece1778.baton.models.StudentProfile;
+import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 import ca.utoronto.ece1778.baton.syncserver.InternetConnectionDetector;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
 
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
+//import ca.utoronto.ece1778.baton.models.StudentProfile;
 
 /**
  * User register
@@ -65,7 +66,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
 	String gcm_id;
 
-	UserProfile mStudentProfile = null;
+	UserProfile mTeacherProfile = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -112,13 +113,13 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		pw = txtPassword.getText().toString();
 		con_pw = txtConfirmPwd.getText().toString();
 
-		mStudentProfile = new UserProfile(gcm_id, loginId, email, pw, fName,
-				lName, UserProfile.USERTYPE_STUDENT);
+		mTeacherProfile = new UserProfile(gcm_id, loginId, email, pw, fName,
+				lName, UserProfile.USERTYPE_TEACHER);
 		
 		// Log.i(TAG, "in on Click " + mStudentProfile.toString());
 
 		// Check if user filled the form
-		if (!isProfileCompleted(mStudentProfile)) {
+		if (!isProfileCompleted(mTeacherProfile)) {
 			alert.showAlertDialog(RegisterActivity.this,
 					"Uncompleted information", "Please enter your details",
 					false);
@@ -130,16 +131,16 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		} else {
 			// Log.i(TAG, "ProfileCompleted");
 			new AsyncRegisterTask()
-					.execute(new UserProfile[] { mStudentProfile });
+					.execute(new UserProfile[] { mTeacherProfile });
 		}
 
 	}
 
 	public void goToJoinPage() {
 		Intent i = new Intent(this, JoinActivity.class);
-		i.putExtra(UserProfile.EMAIL_WEB_STR, mStudentProfile.getEmail());
+		i.putExtra(UserProfile.EMAIL_WEB_STR, mTeacherProfile.getEmail());
 		// TODO dealing with MD5
-		i.putExtra(UserProfile.PASSWORD_WEB_STR, mStudentProfile.getPassword());
+		i.putExtra(UserProfile.PASSWORD_WEB_STR, mTeacherProfile.getPassword());
 		startActivity(i);
 		finish();
 	}
@@ -151,6 +152,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 				&& user.getL_name().trim().length() > 0
 				&& user.getPassword().trim().length() > 0)
 			return true;
+		Log.i("isProfileCompleted",user.toString());
 		return false;
 	}
 	

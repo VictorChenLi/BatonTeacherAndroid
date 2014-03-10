@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-import ca.utoronto.ece1778.baton.gcm.client.main.R;
+import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.syncserver.InternetConnectionDetector;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
 import ca.utoronto.ece1778.baton.util.Constants;
@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
 	TextView lblMessage;
 
 	//change here...
-	// Asyntask
+	// Asyntasks
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	// Alert dialog manager
