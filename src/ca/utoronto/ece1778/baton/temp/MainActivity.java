@@ -10,12 +10,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-import ca.utoronto.ece1778.baton.gcm.client.main.R;
+import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.syncserver.InternetConnectionDetector;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
 import ca.utoronto.ece1778.baton.util.Constants;
 import ca.utoronto.ece1778.baton.util.WakeLocker;
 
+import com.baton.publiclib.model.ticketmanage.Ticket;
 import com.google.android.gcm.GCMRegistrar;
 
 /**
@@ -28,7 +29,7 @@ public class MainActivity extends Activity {
 	TextView lblMessage;
 
 	//change here...
-	// Asyntask
+	// Asyntasks
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	// Alert dialog manager
@@ -121,7 +122,7 @@ public class MainActivity extends Activity {
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			String newMessage = intent.getExtras().getString(Constants.GCM_DATA_TICKET_TYPE);
+			String newMessage = intent.getExtras().getString(Ticket.TICKET_TYPE_TALK);
 			// Waking up mobile if it is sleeping
 			WakeLocker.acquire(getApplicationContext());
 

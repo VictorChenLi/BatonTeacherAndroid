@@ -19,6 +19,10 @@
     <string name="server_unregistered">From Baton Server: successfully removed device!</string>
     <string name="server_register_error">Could not register device on Baton Server after %1$d attempts.</string>
     <string name="server_unregister_error">Could not unregister device on Baton Server (%1$s).</string>
+    <string name="talk_intent_build">Build</string>
+   	<string name="talk_intent_question">Question</string>
+   	<string name="talk_intent_new_idea">New Idea</string>
+   	<string name="talk_intent_challenge">Challenge</string>
     <string name="options_register">Register</string>
     <string name="options_unregister">Unregister</string>
     <string name="options_clear">Clear</string>

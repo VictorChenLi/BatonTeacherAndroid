@@ -2,8 +2,8 @@ package ca.utoronto.ece1778.baton.screens;
 
 import java.util.ArrayList;
 
-import android.content.ClipData.Item;
 import android.content.BroadcastReceiver;
+import android.content.ClipData.Item;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -15,8 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
-import android.widget.Toast;
-import ca.utoronto.ece1778.baton.gcm.client.main.R;
+import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.screens.MainScreenActivity.TicketBroadcastReceiver;
 import ca.utoronto.ece1778.baton.util.Constants;
 

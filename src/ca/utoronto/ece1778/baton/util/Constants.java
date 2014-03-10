@@ -20,19 +20,19 @@ public final class Constants {
 
 	//TODO: use these constants in message exchange between server and clients
 	public static final String GCM_DATA = "data" ;
-	public static final String GCM_DATA_TICKET_TYPE = "ticket_type";
+//	public static final String GCM_DATA_TICKET_TYPE = "ticket_type";
 	/**include student name, order, ......*/
-	public static final String GCM_DATA_TICKET_CONTENT = "ticket_content";
-	public static final String TICKET_TYPE_TALK = "talk";
-	public static final String TICKET_TYPE_WORK = "work";
-
-	public final static String TALK_TICKET_TIMESTAMP = "talk_ticket_timestamp";
-	public final static String TALK_TICKET_INTENT = "talk_ticket_intent";
+//	public static final String GCM_DATA_TICKET_CONTENT = "ticket_content";
+//	public static final String TICKET_TYPE_TALK = "talk";
+//	public static final String TICKET_TYPE_WORK = "work";
+//
+//	public final static String TALK_TICKET_TIMESTAMP = "talk_ticket_timestamp";
+//	public final static String TALK_TICKET_INTENT = "talk_ticket_intent";
 	/**participate intent*/
-	public final static String TALK_INTENT_BUILD = "talk_build";
-	public final static String TALK_INTENT_CHALLENGE = "talk_challenge";
-	public final static String TALK_INTENT_QUESTION = "talk_question";
-	public final static String TALK_INTENT_NEW_IDEA = "talk_new_idea";
+//	public final static String TALK_INTENT_BUILD = "talk_build";
+//	public final static String TALK_INTENT_CHALLENGE = "talk_challenge";
+//	public final static String TALK_INTENT_QUESTION = "talk_question";
+//	public final static String TALK_INTENT_NEW_IDEA = "talk_new_idea";
 
 	public final static String SQLLITE_STUDENT_DATABASE_NAME = "baton_student";
 	public final static String SQLLITE_TABLE_USER_PROFILE = "GCM_USER_PROFILE";

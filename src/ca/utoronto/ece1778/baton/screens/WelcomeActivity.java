@@ -12,10 +12,8 @@ import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import ca.utoronto.ece1778.baton.gcm.client.main.R;
-import ca.utoronto.ece1778.baton.models.StudentProfile;
+import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
-import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
 import com.google.android.gcm.GCMRegistrar;
