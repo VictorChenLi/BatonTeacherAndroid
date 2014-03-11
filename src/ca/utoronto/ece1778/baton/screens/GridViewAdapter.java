@@ -76,7 +76,7 @@ public class GridViewAdapter extends ArrayAdapter<Item> {
 				.equals(Ticket.TALK_INTENT_CHALLENGE_WEB_STR)) {
 			// TODO 根据intent设置不同的icon
 		}
-		//TODO:wait_type应该显示在中间的face的部位，目前为了查看方便，借用了participate_time的地方，之后需要修改过来
+		//TODO:wait_time应该显示在中间的face的部位，目前为了查看方便，借用了participate_time的地方，之后需要修改过来
 		//holder.txtParTime.setText(intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_TIMES));
 		holder.txtParTime.setText(intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_WAIT_TIME));
 		holder.txtParTime.setTypeface(tf);

@@ -41,7 +41,8 @@ import com.google.android.gcm.GCMRegistrar;
  * @author Yi Zhao
  * 
  */
-//TODO 为方便测试，暂时在AndroidManifest.xml中将Launcher Activity设置为了MainScreenActivity，以后需要修改回去
+// TODO 为方便测试，暂时在AndroidManifest.xml中将Launcher
+// Activity设置为了MainScreenActivity，以后需要修改回去
 public class MainScreenActivity extends FragmentActivity implements
 		ActionBar.TabListener {
 	static final String TAG = "MainActivity";// name for Log
@@ -66,10 +67,19 @@ public class MainScreenActivity extends FragmentActivity implements
 	ArrayList<Item> talkGridArray = new ArrayList<Item>();
 	GridViewAdapter talkGridAdapter;
 
+	// ///////////TODO: 实验用//////////////
+	String test_StartTime1="2014-03-11T02:23:00.736";
+	String test_StartTime2="2014-03-11T02:23:10.736";
+	long testST = CommonUtilities.getDataTime(test_StartTime1);
+	TalkTicketForDisplay test_t3 = null;
+	// ////////////////////////////
+
 	/**
 	 * talk ticket receiver: receive notification of talk ticket update from
-	 * back-end service, reload the ticket for display array */
-	//TODO: or maybe don't need a receiver? since the global array will change, anyway..	 
+	 * back-end service, reload the ticket for display array
+	 */
+	// TODO: or maybe don't need a receiver? since the global array will change,
+	// anyway..
 	private final BroadcastReceiver mHandleMessageReceiver_talk = new TalkTicketBroadcastReceiver();
 
 	private TalkWidgeUpdataTask mTalkUpdateTask;
@@ -117,14 +127,18 @@ public class MainScreenActivity extends FragmentActivity implements
 		// load talk tickets for display
 		t_ticket4Display = CommonUtilities.getGlobalTalkArrayVar(this);
 
-		////////////////just for testing without real dynamic ticket load and update
-		TalkTicketForDisplay t1 = new TalkTicketForDisplay("2014-03-11T01:14:00.736", "Alice",
+		// //////////////just for testing without real dynamic ticket load and
+		// update
+		TalkTicketForDisplay t1 = new TalkTicketForDisplay(test_StartTime1, "Victor",
+				Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
+		TalkTicketForDisplay t2 = new TalkTicketForDisplay(test_StartTime2, "Fiona",
 				Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
 		CommonUtilities.addGlobalTalkVar(this, t1);
-		/////////////////////////////////////////////////////
-		
+		CommonUtilities.addGlobalTalkVar(this, t2);
+		// ///////////////////////////////////////////////////
+
 		Log.i(TAG, "initial t_ticket4Display size:" + t_ticket4Display.size());
-		
+
 		// start a thread to refresh the UI every 1 second
 		mTalkUpdateTask = new TalkWidgeUpdataTask();
 		mTalkUpdateTask.execute();
@@ -214,7 +228,6 @@ public class MainScreenActivity extends FragmentActivity implements
 	}
 
 	protected class TalkWidgeUpdataTask extends AsyncTask<Void, Long, String> {
-		// List<TalkTicketForDisplay> displayArray;
 
 		@Override
 		protected String doInBackground(Void... unused) {
@@ -228,8 +241,7 @@ public class MainScreenActivity extends FragmentActivity implements
 					e.printStackTrace();
 				}
 			}
-			// displayArray =
-			// CommonUtilities.getGlobalTalkArrayVar(MainScreenActivity.this);
+
 			while (true) {
 				long curTime = System.currentTimeMillis();
 				publishProgress(new Long[] { curTime });
@@ -244,6 +256,14 @@ public class MainScreenActivity extends FragmentActivity implements
 		@Override
 		protected void onProgressUpdate(Long... curTime) {
 			super.onProgressUpdate(curTime);
+			// ///TODO 待注释 试验:过一段时间之后t_ticket4Display发生变化，UI是否能正常更新 --goes well
+			/*if (test_t3 == null && (curTime[0] - testST) > 40 * 1000) {
+				test_t3 = new TalkTicketForDisplay(test_StartTime1, "Zack",
+						Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
+				CommonUtilities.addGlobalTalkVar(MainScreenActivity.this, test_t3);
+			}*/
+			// end///////////////////
+			
 			talkGridArray.clear();
 			for (TalkTicketForDisplay item : t_ticket4Display) {
 				Intent intent = new Intent();
@@ -255,15 +275,15 @@ public class MainScreenActivity extends FragmentActivity implements
 						item.getParticipate_times());
 				long startTime = CommonUtilities.getDataTime(item
 						.getStartTimeStamp());
+				
 				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_WAIT_TIME,
-						String.valueOf(curTime[0] - startTime));
+						String.valueOf((curTime[0] - startTime) / 1000));
 				talkGridArray.add(new Item(intent));
 			}
 			talkGridAdapter = new GridViewAdapter(MainScreenActivity.this, R.layout.talk_student_item, talkGridArray);
 			talkGridView.setAdapter(talkGridAdapter);
 
 		}
-
 	}
 
 	@Override
@@ -292,6 +312,7 @@ public class MainScreenActivity extends FragmentActivity implements
 
 	@Override
 	public void onDestroy() {
+		//TODO 处理黑屏、返回时的线程中断，待优化
 		Log.i("MainScreenActivity", "onDestroy called");
 		if (mTalkUpdateTask != null && !mTalkUpdateTask.isCancelled()) {
 			mTalkUpdateTask.cancel(true);
