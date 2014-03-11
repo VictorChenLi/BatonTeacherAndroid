@@ -16,6 +16,8 @@ import android.widget.TextView;
 import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.util.Constants;
 
+import com.baton.publiclib.model.ticketmanage.Ticket;
+
 /***
  * 
  * @author Yi Zhao
@@ -58,28 +60,27 @@ public class GridViewAdapter extends ArrayAdapter<Item> {
 		Intent intent = item.getIntent();
 		Typeface tf = Typeface.createFromAsset(context.getAssets(), Constants.TYPEFACE_ACTION_MAN_BOLD);
 		holder.txtName.setText(intent
-						.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_STUDENT_NAME));
+				.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_STUDENT_NAME));
 		holder.txtName.setTypeface(tf);
-		if(position==0)
-		    holder.imgFaceOrWaitTime.setBackgroundResource(R.drawable.button_face);
-		if(position==1)
-			holder.imgFaceOrWaitTime.setBackgroundResource(R.drawable.button_face2);
+		holder.imgFaceOrWaitTime.setBackgroundResource(R.drawable.button_face2);
 		if (intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT)
-				.equals(Constants.TALK_INTENT_NEW_IDEA)) {
+				.equals(Ticket.TALK_INTENT_NEWIDEA_WEB_STR)) {
 			holder.imgParIntent.setImageResource(R.drawable.talk_new_idea_s);
-		}else if(intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT)
-				.equals(Constants.TALK_INTENT_BUILD)){
-			//TODO
-		}else if(intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT)
-				.equals(Constants.TALK_INTENT_CHALLENGE)){
-			//TODO
-		}else if(intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT)
-				.equals(Constants.TALK_INTENT_QUESTION)){
-			//TODO
+		} else if (intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT)
+				.equals(Ticket.TALK_INTENT_BUILD_WEB_STR)) {
+			// TODO:根据intent设置不同的icon
+		} else if (intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT)
+				.equals(Ticket.TALK_INTENT_CHALLENGE_WEB_STR)) {
+			// TODO 根据intent设置不同的icon
+		} else if (intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT)
+				.equals(Ticket.TALK_INTENT_CHALLENGE_WEB_STR)) {
+			// TODO 根据intent设置不同的icon
 		}
-		holder.txtParTime.setText(intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_TIMES));
+		//TODO:wait_type应该显示在中间的face的部位，目前为了查看方便，借用了participate_time的地方，之后需要修改过来
+		//holder.txtParTime.setText(intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_TIMES));
+		holder.txtParTime.setText(intent.getStringExtra(TalkTagFragment.INTENT_EXTRA_ITEM_WAIT_TIME));
 		holder.txtParTime.setTypeface(tf);
-		
+
 		return row;
 	}
 

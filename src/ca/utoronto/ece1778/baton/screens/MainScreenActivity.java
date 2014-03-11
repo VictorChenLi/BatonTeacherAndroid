@@ -1,10 +1,13 @@
 package ca.utoronto.ece1778.baton.screens;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
+import android.content.ClipData.Item;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -19,13 +22,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.GridView;
 import android.widget.TextView;
 import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 import ca.utoronto.ece1778.baton.util.WakeLocker;
 
+import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
 import com.baton.publiclib.model.ticketmanage.Ticket;
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
@@ -37,9 +41,10 @@ import com.google.android.gcm.GCMRegistrar;
  * @author Yi Zhao
  * 
  */
+//TODO 为方便测试，暂时在AndroidManifest.xml中将Launcher Activity设置为了MainScreenActivity，以后需要修改回去
 public class MainScreenActivity extends FragmentActivity implements
 		ActionBar.TabListener {
-
+	static final String TAG = "MainActivity";// name for Log
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -54,34 +59,35 @@ public class MainScreenActivity extends FragmentActivity implements
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
-	
-	TextView tv_intent;
-	TextView tv_waitTime;
-	TextView tv_nickName;
-	
 
+	/** UI item on talk tab */
+	List<TalkTicketForDisplay> t_ticket4Display;
+	GridView talkGridView;
+	ArrayList<Item> talkGridArray = new ArrayList<Item>();
+	GridViewAdapter talkGridAdapter;
 
-	private final BroadcastReceiver mHandleMessageReceiver = new TicketBroadcastReceiver();
-	
-	
-	
+	/**
+	 * talk ticket receiver: receive notification of talk ticket update from
+	 * back-end service, reload the ticket for display array */
+	//TODO: or maybe don't need a receiver? since the global array will change, anyway..	 
+	private final BroadcastReceiver mHandleMessageReceiver_talk = new TalkTicketBroadcastReceiver();
+
+	private TalkWidgeUpdataTask mTalkUpdateTask;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i(TAG, "onCreate Called");
 		setContentView(R.layout.activity_main_screen);
-//		findViews();
-		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		registerReceiver(mHandleMessageReceiver, new IntentFilter(
-				Constants.DISPLAY_TICKET_ACTION));
+		registerReceiver(mHandleMessageReceiver_talk, new IntentFilter(
+				Constants.DISPLAY_TALK_TICKET_ACTION));
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -90,13 +96,12 @@ public class MainScreenActivity extends FragmentActivity implements
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
-		mViewPager
-				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-					@Override
-					public void onPageSelected(int position) {
-						actionBar.setSelectedNavigationItem(position);
-					}
-				});
+		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				actionBar.setSelectedNavigationItem(position);
+			}
+		});
 
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
@@ -108,47 +113,43 @@ public class MainScreenActivity extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+
+		// load talk tickets for display
+		t_ticket4Display = CommonUtilities.getGlobalTalkArrayVar(this);
+
+		////////////////just for testing without real dynamic ticket load and update
+		TalkTicketForDisplay t1 = new TalkTicketForDisplay("2014-03-11T01:14:00.736", "Alice",
+				Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
+		CommonUtilities.addGlobalTalkVar(this, t1);
+		/////////////////////////////////////////////////////
+		
+		Log.i(TAG, "initial t_ticket4Display size:" + t_ticket4Display.size());
+		
+		// start a thread to refresh the UI every 1 second
+		mTalkUpdateTask = new TalkWidgeUpdataTask();
+		mTalkUpdateTask.execute();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.main, menu);
-	    return super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    //TODO: Handle presses on the action bar items
-	    switch (item.getItemId()) {
-	        case R.id.menu_profile:
-	            return true;
-	        case R.id.menu_log_out:
-	        	return true;
-	        case R.id.menu_about:
-	        	return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
-	}
-	
-
-	@Override
-	public void onTabSelected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
-		// When the given tab is selected, switch to the corresponding page in
-		// the ViewPager.
-		mViewPager.setCurrentItem(tab.getPosition());
-	}
-
-	@Override
-	public void onTabUnselected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
-	}
-
-	@Override
-	public void onTabReselected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
+		// TODO: Handle presses on the action bar items
+		switch (item.getItemId()) {
+		case R.id.menu_profile:
+			return true;
+		case R.id.menu_log_out:
+			return true;
+		case R.id.menu_about:
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	/**
@@ -174,13 +175,8 @@ public class MainScreenActivity extends FragmentActivity implements
 			case 1:
 				fragment = new WorkTagFragment();
 				break;
-			
+
 			}
-			/*
-			 * Bundle args = new Bundle();
-			 * args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position +
-			 * 1); fragment.setArguments(args);
-			 */
 			return fragment;
 		}
 
@@ -203,124 +199,106 @@ public class MainScreenActivity extends FragmentActivity implements
 		}
 	}
 
-	class TicketBroadcastReceiver extends BroadcastReceiver {
+	class TalkTicketBroadcastReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+
+			WakeLocker.acquire(getApplicationContext());
+			// TODO:重新获取t_ticket4Display
+			t_ticket4Display = CommonUtilities.getGlobalTalkArrayVar(MainScreenActivity.this);
 			Log.i("MainScreenActivity", "onReceive Called");
-			String ticketType = intent
-					.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
-			String ticketContent = intent
-					.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
-			if(ticketContent.equals(Ticket.TALK_INTENT_BUILD_WEB_STR)){
-				ticketContent = context.getString(R.string.talk_intent_build);
-			}else if(ticketContent.equals(Ticket.TALK_INTENT_CHALLENGE_WEB_STR)){
-				ticketContent = context.getString(R.string.talk_intent_challenge);
-			}else if(ticketContent.equals(Ticket.TALK_INTENT_NEWIDEA_WEB_STR)){
-				ticketContent = context.getString(R.string.talk_intent_new_idea);
-			}else if(ticketContent.equals(Ticket.TALK_INTENT_QUESTION_WEB_STR)){
-				ticketContent = context.getString(R.string.talk_intent_question);
-			}
-			String timeStamp = intent.getStringExtra(Ticket.TIMESTAMP_WEB_STR);
-			String loginId = intent.getStringExtra(UserProfile.LOGINID_WEB_STR);
-			int uid = intent.getIntExtra(Ticket.UID_WEB_STR, 0);
-			Log.i("MainScreenActivity", ticketType + ticketContent + timeStamp);
+			WakeLocker.release();
+		}
 
-			// TODO: update talk tab and work tab according to the ticket type
-			// and its content here
-			if (ticketType.equals(Ticket.TICKET_TYPE_TALK)) {
-				// Waking up mobile if it is sleeping
-				WakeLocker.acquire(getApplicationContext());
+	}
 
-				/**
-				 * Take appropriate action on this message depending upon your
-				 * app requirement For now i am just displaying it on the screen
-				 * */
-				tv_intent = (TextView)mViewPager.findViewById(R.id.tv_intent);
-				tv_waitTime = (TextView) mViewPager.findViewById(R.id.tv_waitTime);
-				tv_nickName = (TextView) mViewPager.findViewById(R.id.tv_name);
-				String newMessage = loginId +":"+ ticketType + ": " + ticketContent;
-				Log.i("MainScreenActivity", newMessage);
-				//Toast.makeText(context, newMessage, Toast.LENGTH_LONG).show();
-				tv_intent.setText(ticketContent);
-				tv_nickName.setText(loginId);
-				
-				(new MainScreenActivity.WidgeUpdataTask(tv_waitTime)).execute(timeStamp);
-//				TextView m = (TextView) findViewById(R.id.lblMessage);
-//				m.append(newMessage);
-				// Releasing wake lock
-				WakeLocker.release();
+	protected class TalkWidgeUpdataTask extends AsyncTask<Void, Long, String> {
+		// List<TalkTicketForDisplay> displayArray;
+
+		@Override
+		protected String doInBackground(Void... unused) {
+			WakeLocker.acquire(getApplicationContext());
+			talkGridView = (GridView) mViewPager.findViewById(R.id.talk_tab_grid);
+			while (talkGridView == null) {// wait until gridView is created
+				talkGridView = (GridView) mViewPager.findViewById(R.id.talk_tab_grid);
+				try {
+					Thread.sleep(1 * 1000); // sleep for one second
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+			// displayArray =
+			// CommonUtilities.getGlobalTalkArrayVar(MainScreenActivity.this);
+			while (true) {
+				long curTime = System.currentTimeMillis();
+				publishProgress(new Long[] { curTime });
+				try {
+					Thread.sleep(1 * 1000); // sleep for one second
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		protected void onProgressUpdate(Long... curTime) {
+			super.onProgressUpdate(curTime);
+			talkGridArray.clear();
+			for (TalkTicketForDisplay item : t_ticket4Display) {
+				Intent intent = new Intent();
+				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_STUDENT_NAME,
+						item.getStudent_name());
+				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT,
+						item.getParticipate_intent());
+				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_TIMES,
+						item.getParticipate_times());
+				long startTime = CommonUtilities.getDataTime(item
+						.getStartTimeStamp());
+				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_WAIT_TIME,
+						String.valueOf(curTime[0] - startTime));
+				talkGridArray.add(new Item(intent));
+			}
+			talkGridAdapter = new GridViewAdapter(MainScreenActivity.this, R.layout.talk_student_item, talkGridArray);
+			talkGridView.setAdapter(talkGridAdapter);
 
 		}
 
 	}
 
-	protected class WidgeUpdataTask extends AsyncTask<String, Long, String> {
-
-		View uiView;
-		
-		public WidgeUpdataTask(View view)
-		{
-			uiView= view;
-		}
-		
-		@Override
-		protected String doInBackground(String... arg0) {
-			String strTime=arg0[0];
-			long startTime = CommonUtilities.getDataTime(strTime);
-			long curTime = System.currentTimeMillis();
-			while(curTime-startTime<3000*1000)
-			{
-				curTime = System.currentTimeMillis();
-				publishProgress(new Long[]{curTime-startTime});
-//				Integer[] colorCode = {0x00CCFF};
-//				publishProgress(colorCode);
-//				colorCode+=
-//				if(curTime-startTime<30*1000)
-//				{
-//					publishProgress(new Integer[]{0x00CCFF,(int) (curTime-startTime)});
-//				}
-//				else
-//					if (curTime-startTime<2*30*1000)
-//					{
-//						publishProgress(new Integer[]{0xFFCC00,(int) (curTime-startTime)});
-//					}
-//					else
-//						if(curTime-startTime<3*30*1000)
-//						{
-//							publishProgress(new Integer[]{0xFF0000,(int) (curTime-startTime)});
-//						}
-//				try {
-//					Thread.sleep(10*1000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-			}
-			return null;
-		}
-
-
-		@Override
-		protected void onProgressUpdate(Long... values) {
-			super.onProgressUpdate(values);
-			TextView tv_waitTime = (TextView)uiView;
-//			tv_waitTime.setBackgroundColor(getResources().getColor(R.color.common_signin_btn_text_dark));
-			tv_waitTime.setText(String.valueOf(values[0]/1000));
-		}
-		
+	@Override
+	public void onTabSelected(ActionBar.Tab tab,
+			FragmentTransaction fragmentTransaction) {
+		// When the given tab is selected, switch to the corresponding page in
+		// the ViewPager.
+		mViewPager.setCurrentItem(tab.getPosition());
 	}
-	
+
+	@Override
+	public void onTabUnselected(ActionBar.Tab tab,
+			FragmentTransaction fragmentTransaction) {
+	}
+
+	@Override
+	public void onTabReselected(ActionBar.Tab tab,
+			FragmentTransaction fragmentTransaction) {
+	}
+
 	public void onPause() {
-		super.onPause();
 		Log.i("MainScreenActivity", "onPause called");
+		super.onPause();
+
 	}
 
 	@Override
 	public void onDestroy() {
+		Log.i("MainScreenActivity", "onDestroy called");
+		if (mTalkUpdateTask != null && !mTalkUpdateTask.isCancelled()) {
+			mTalkUpdateTask.cancel(true);
+			Log.i(TAG, "mTalkUpdateTask isCancelled:" + mTalkUpdateTask.isCancelled());
+		}
 		try {
-			unregisterReceiver(mHandleMessageReceiver);
+			unregisterReceiver(mHandleMessageReceiver_talk);
 			GCMRegistrar.onDestroy(this);
 		} catch (Exception e) {
 			Log.e("UnRegister Receiver Error", "> " + e.getMessage());

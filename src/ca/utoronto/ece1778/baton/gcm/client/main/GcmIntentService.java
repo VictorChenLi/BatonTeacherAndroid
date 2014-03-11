@@ -50,8 +50,10 @@ public class GcmIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onRegistered(Context context, String registrationId) {
 		Log.i(TAG, "Device registered: regId = " + registrationId);
-		/*CommonUtilities.displayMessage(context,
-				"Your device registred with GCM");*/
+		/*
+		 * CommonUtilities.displayMessage(context,
+		 * "Your device registred with GCM");
+		 */
 		// Log.d("NAME", MainActivity.name);
 		// BatonServerCommunicator.registerDevice(context, MainActivity.name,
 		// MainActivity.email, registrationId);
@@ -80,21 +82,27 @@ public class GcmIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "onMessage called");
-		
-
+  //TODO: 修改以下实现，接受并处理GCM消息，写数据库，写内存数据（用GlobalApplication），通过广播通知UI进程刷新界面
 		String ticketType = intent.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
-		String ticketContent = intent.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
+		String ticketContent = intent
+				.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
 		String timeStamp = intent.getStringExtra(Ticket.TIMESTAMP_WEB_STR);
 		int uid = intent.getIntExtra(Ticket.UID_WEB_STR, 0);
-		String loginId=intent.getStringExtra(UserProfile.LOGINID_WEB_STR);
-		Intent out = new Intent(Constants.DISPLAY_TICKET_ACTION);
+		String loginId = intent.getStringExtra(UserProfile.LOGINID_WEB_STR);
+		Intent out = null;
+		if (ticketType.equals(Ticket.TICKET_TYPE_TALK)) {
+			out = new Intent(Constants.DISPLAY_TALK_TICKET_ACTION);
+		} else if (ticketType.equals(Ticket.TICKET_TYPE_WORK)) {
+			out = new Intent(Constants.DISPLAY_WORK_TICKET_ACTION);
+		} else {//should not be reach in normal case
+			out = new Intent();
+		}
 		out.putExtra(Ticket.TICKETTYPE_WEB_STR, ticketType);
 		out.putExtra(Ticket.TICKETCONTENT_WEB_STR, ticketContent);
 		out.putExtra(Ticket.TIMESTAMP_WEB_STR, timeStamp);
 		out.putExtra(Ticket.UID_WEB_STR, uid);
 		out.putExtra(UserProfile.LOGINID_WEB_STR, loginId);
 		context.sendBroadcast(out);
-
 	}
 
 	/**
@@ -104,9 +112,9 @@ public class GcmIntentService extends GCMBaseIntentService {
 	protected void onDeletedMessages(Context context, int total) {
 		Log.i(TAG, "Received deleted messages notification");
 		String message = getString(R.string.gcm_deleted, total);
-		//CommonUtilities.displayMessage(context, message);
+		// CommonUtilities.displayMessage(context, message);
 		// notifies user
-		//generateNotification(context, message);
+		// generateNotification(context, message);
 	}
 
 	/**
@@ -131,31 +139,32 @@ public class GcmIntentService extends GCMBaseIntentService {
 	/**
 	 * Issues a notification to inform the user that server has sent a message.
 	 */
-	/*private static void generateNotification(Context context, String message) {
-		int icon = R.drawable.ic_launcher;
-		long when = System.currentTimeMillis();
-		NotificationManager notificationManager = (NotificationManager) context
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification notification = new Notification(icon, message, when);
-
-		String title = context.getString(R.string.app_name);
-
-		Intent notificationIntent = new Intent(context, MainActivity.class);
-		// set intent so it does not start a new activity
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent intent = PendingIntent.getActivity(context, 0,
-				notificationIntent, 0);
-		notification.setLatestEventInfo(context, title, message, intent);
-		notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-		// Play default notification sound
-		notification.defaults |= Notification.DEFAULT_SOUND;
-
-		// Vibrate if vibrate is enabled
-		notification.defaults |= Notification.DEFAULT_VIBRATE;
-		notificationManager.notify(0, notification);
-
-	}*/
+	/*
+	 * private static void generateNotification(Context context, String message)
+	 * { int icon = R.drawable.ic_launcher; long when =
+	 * System.currentTimeMillis(); NotificationManager notificationManager =
+	 * (NotificationManager) context
+	 * .getSystemService(Context.NOTIFICATION_SERVICE); Notification
+	 * notification = new Notification(icon, message, when);
+	 * 
+	 * String title = context.getString(R.string.app_name);
+	 * 
+	 * Intent notificationIntent = new Intent(context, MainActivity.class); //
+	 * set intent so it does not start a new activity
+	 * notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+	 * Intent.FLAG_ACTIVITY_SINGLE_TOP); PendingIntent intent =
+	 * PendingIntent.getActivity(context, 0, notificationIntent, 0);
+	 * notification.setLatestEventInfo(context, title, message, intent);
+	 * notification.flags |= Notification.FLAG_AUTO_CANCEL;
+	 * 
+	 * // Play default notification sound notification.defaults |=
+	 * Notification.DEFAULT_SOUND;
+	 * 
+	 * // Vibrate if vibrate is enabled notification.defaults |=
+	 * Notification.DEFAULT_VIBRATE; notificationManager.notify(0,
+	 * notification);
+	 * 
+	 * }
+	 */
 
 }

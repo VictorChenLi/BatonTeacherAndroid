@@ -3,8 +3,12 @@ package ca.utoronto.ece1778.baton.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
+
+import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
 
 public class CommonUtilities {
 
@@ -51,10 +55,33 @@ public class CommonUtilities {
 		try {
 			parseDate = simpleDateFormat.parse(strTime);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return parseDate.getTime();
+	}
+	
+	public static Object getGlobalStringVar(Activity context,String key)
+	{
+		GlobalApplication global = (GlobalApplication) context.getApplication();
+		return global.getStringVar(key);
+	}
+	
+	public static void putGlobalStringVar(Activity context,String key, String value)
+	{
+		GlobalApplication global = (GlobalApplication) context.getApplication();
+		global.putStringVar(key, value);
+	}
+	
+	public static List<TalkTicketForDisplay> getGlobalTalkArrayVar(Activity context)
+	{
+		GlobalApplication global = (GlobalApplication) context.getApplication();
+		return global.getmTalkTicket4DispArray();
+	}
+	
+	public static void addGlobalTalkVar(Activity context,TalkTicketForDisplay value)
+	{
+		GlobalApplication global = (GlobalApplication) context.getApplication();
+		global.putTalkArrayVar(value);
 	}
 
 }

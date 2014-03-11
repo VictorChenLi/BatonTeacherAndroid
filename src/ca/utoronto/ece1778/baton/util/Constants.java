@@ -12,13 +12,15 @@ public final class Constants {
 	 * name of intent filter, used when the GcmIntentService broadcast ticket
 	 * message to MainScreenActivity
 	 */
-	public static final String DISPLAY_TICKET_ACTION = "/ca.utoronto.ece1778.baton.DISPLAY_TICKET";
+	public static final String DISPLAY_TALK_TICKET_ACTION = "/ca.utoronto.ece1778.baton.DISPLAY_TALK_TICKET";
+	public static final String DISPLAY_WORK_TICKET_ACTION = "/ca.utoronto.ece1778.baton.DISPLAY_WORK_TICKET";
+	
 	
 	/**path for Typeface assets*/
 	public final static String TYPEFACE_COMIC_RELIEF = "fonts/ComicRelief.ttf";
 	public final static String TYPEFACE_ACTION_MAN_BOLD = "fonts/Action_Man_Bold.ttf";
 
-	//TODO: use these constants in message exchange between server and clients
+	//use these constants in message exchange between server and clients
 	public static final String GCM_DATA = "data" ;
 //	public static final String GCM_DATA_TICKET_TYPE = "ticket_type";
 	/**include student name, order, ......*/

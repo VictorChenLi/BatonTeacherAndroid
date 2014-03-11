@@ -5,9 +5,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -17,7 +19,9 @@ import android.util.Log;
 import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
+import ca.utoronto.ece1778.baton.util.GlobalApplication;
 
+import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
 //import ca.utoronto.ece1778.baton.models.StudentProfile;
@@ -126,6 +130,7 @@ public class BatonServerCommunicator {
 				post(serverUrl, params);
 				//String message = context.getString(R.string.server_registered);
 				//CommonUtilities.displayMessage(context, message);
+				//TODO: load ticket information after login here
 				Log.i(TAG, "login success");
 				return REPLY_MESSAGE_LOGIN_SUCCESS;
 			} catch (IOException e) {
