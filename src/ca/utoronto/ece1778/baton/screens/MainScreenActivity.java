@@ -25,8 +25,12 @@ import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.TextView;
 import ca.utoronto.ece1778.baton.TEACHER.R;
+import ca.utoronto.ece1778.baton.database.DBAccess;
+import ca.utoronto.ece1778.baton.database.DBAccessImpl;
+import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
+import ca.utoronto.ece1778.baton.util.GlobalApplication;
 import ca.utoronto.ece1778.baton.util.WakeLocker;
 
 import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
@@ -123,26 +127,44 @@ public class MainScreenActivity extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
-
 		// load talk tickets for display
-		t_ticket4Display = CommonUtilities.getGlobalTalkArrayVar(this);
+//		t_ticket4Display = CommonUtilities.getTicketForDisplayList(this);
 
 		// //////////////just for testing without real dynamic ticket load and
 		// update
-		TalkTicketForDisplay t1 = new TalkTicketForDisplay(test_StartTime1, "Victor",
-				Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
-		TalkTicketForDisplay t2 = new TalkTicketForDisplay(test_StartTime2, "Fiona",
-				Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
-		CommonUtilities.addGlobalTalkVar(this, t1);
-		CommonUtilities.addGlobalTalkVar(this, t2);
+//		TalkTicketForDisplay t1 = new TalkTicketForDisplay(test_StartTime1, "Victor",
+//				Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
+//		TalkTicketForDisplay t2 = new TalkTicketForDisplay(test_StartTime2, "Fiona",
+//				Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
+//		CommonUtilities.addGlobalTalkVar(this, t1);
+//		CommonUtilities.addGlobalTalkVar(this, t2);
 		// ///////////////////////////////////////////////////
 
-		Log.i(TAG, "initial t_ticket4Display size:" + t_ticket4Display.size());
+//		Log.i(TAG, "initial t_ticket4Display size:" + t_ticket4Display.size());
 
 		// start a thread to refresh the UI every 1 second
+		t_ticket4Display = CommonUtilities.getTicketForDisplayList(this);
 		mTalkUpdateTask = new TalkWidgeUpdataTask();
 		mTalkUpdateTask.execute();
 	}
+	
+	public void syncDatabase()
+    {
+    	DBAccess dbaccess = DBAccessImpl.getInstance(getApplicationContext());
+        if(dbaccess.DetactDatabase())
+        {
+    		BatonServerCommunicator.uploadTicketData(this);
+    		dbaccess.ResetDatabase();
+        }
+    }
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+	}
+
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -220,7 +242,7 @@ public class MainScreenActivity extends FragmentActivity implements
 
 			WakeLocker.acquire(getApplicationContext());
 			// TODO:重新获取t_ticket4Display
-			t_ticket4Display = CommonUtilities.getGlobalTalkArrayVar(MainScreenActivity.this);
+			t_ticket4Display = CommonUtilities.getTicketForDisplayList(MainScreenActivity.this);
 			Log.i("MainScreenActivity", "onReceive Called");
 			WakeLocker.release();
 		}
@@ -256,31 +278,10 @@ public class MainScreenActivity extends FragmentActivity implements
 		@Override
 		protected void onProgressUpdate(Long... curTime) {
 			super.onProgressUpdate(curTime);
-			// ///TODO 待注释 试验:过一段时间之后t_ticket4Display发生变化，UI是否能正常更新 --goes well
-			/*if (test_t3 == null && (curTime[0] - testST) > 40 * 1000) {
-				test_t3 = new TalkTicketForDisplay(test_StartTime1, "Zack",
-						Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
-				CommonUtilities.addGlobalTalkVar(MainScreenActivity.this, test_t3);
-			}*/
-			// end///////////////////
 			
 			talkGridArray.clear();
-			for (TalkTicketForDisplay item : t_ticket4Display) {
-				Intent intent = new Intent();
-				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_STUDENT_NAME,
-						item.getStudent_name());
-				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_INTENT,
-						item.getParticipate_intent());
-				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_PAR_TIMES,
-						item.getParticipate_times());
-				long startTime = CommonUtilities.getDataTime(item
-						.getStartTimeStamp());
-				
-				intent.putExtra(TalkTagFragment.INTENT_EXTRA_ITEM_WAIT_TIME,
-						String.valueOf((curTime[0] - startTime) / 1000));
-				talkGridArray.add(new Item(intent));
-			}
-			talkGridAdapter = new GridViewAdapter(MainScreenActivity.this, R.layout.talk_student_item, talkGridArray);
+			List<TalkTicketForDisplay> presentList = new ArrayList<TalkTicketForDisplay>(t_ticket4Display);
+			talkGridAdapter = new GridViewAdapter(MainScreenActivity.this, R.layout.talk_student_item, presentList);
 			talkGridView.setAdapter(talkGridAdapter);
 
 		}
@@ -324,6 +325,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		} catch (Exception e) {
 			Log.e("UnRegister Receiver Error", "> " + e.getMessage());
 		}
+		syncDatabase();
 		super.onDestroy();
 	}
 

@@ -15,6 +15,8 @@
  */
 package ca.utoronto.ece1778.baton.screens;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -27,10 +29,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import ca.utoronto.ece1778.baton.TEACHER.R;
+import ca.utoronto.ece1778.baton.database.DBAccess;
+import ca.utoronto.ece1778.baton.database.DBAccessImpl;
 import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
+import ca.utoronto.ece1778.baton.util.CommonUtilities;
 
+import com.baton.publiclib.model.classmanage.ClassLesson;
+import com.baton.publiclib.model.ticketmanage.Ticket;
 import com.baton.publiclib.model.usermanage.UserProfile;
+import com.baton.publiclib.utility.JsonHelper;
 //import ca.utoronto.ece1778.baton.models.StudentProfile;
 
 /**
@@ -41,7 +49,9 @@ import com.baton.publiclib.model.usermanage.UserProfile;
 public class JoinActivity extends Activity implements OnClickListener {
 	// alert dialog manager
 	AlertDialogManager alert = new AlertDialogManager();
+	DBAccess dbaccess =null;
 
+	private JoinActivity demo;
 	// UI elements
 	EditText txtEmail;
 	EditText txtClassroom;
@@ -49,14 +59,14 @@ public class JoinActivity extends Activity implements OnClickListener {
 	Button btnRegister;
 	Button btnJoin;
 
-	ProgressDialog mProgress;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_login);
-
+		dbaccess = DBAccessImpl.getInstance(getApplicationContext());
+		demo = this;
 		txtEmail = (EditText) findViewById(R.id.login_txtEmail);
 		txtClassroom = (EditText) findViewById(R.id.login_txtClassroomName);
 		txtPassword = (EditText) findViewById(R.id.login_txtPassword);
@@ -65,8 +75,6 @@ public class JoinActivity extends Activity implements OnClickListener {
 
 		btnJoin.setOnClickListener(this);
 		btnRegister.setOnClickListener(this);
-		
-		mProgress = new ProgressDialog(this);
 
 		/*in case the previous context is RegisterActivity*/
 		Intent intent = this.getIntent();
@@ -88,6 +96,7 @@ public class JoinActivity extends Activity implements OnClickListener {
 			String email = txtEmail.getText().toString();
 			String classroom = txtClassroom.getText().toString();
 			String password = txtPassword.getText().toString();
+			
 			// Check if user filled the form
 			if (email.trim().length() > 0 && password.trim().length() > 0
 					&& classroom.trim().length() > 0) {
@@ -110,7 +119,52 @@ public class JoinActivity extends Activity implements OnClickListener {
 		startActivity(i);
 		finish();
 	}
+	
+	public void loadingTicketData(String lessonStr)
+	{
+		ClassLesson lesson = (ClassLesson) JsonHelper.deserialize(lessonStr, ClassLesson.class);
+		CommonUtilities.putGlobalStringVar(demo, ClassLesson.LESSONID_WEB_STR, String.valueOf(lesson.getLid()));
+		new AsyncSyncTicketDataTask().execute(new String[]{String.valueOf(lesson.getLid())});
+	}
 
+	class AsyncSyncTicketDataTask extends AsyncTask<String, Void, String> {
+		ProgressDialog mProgress;
+		
+		public AsyncSyncTicketDataTask()
+		{
+			mProgress = new ProgressDialog(demo);
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			mProgress.setMessage("loading classroom data...");
+			mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			mProgress.setCancelable(false);
+			mProgress.setProgress(0);
+			mProgress.show();
+		}
+		
+		@Override
+		protected String doInBackground(String... token) {
+			List<Ticket> ticketList = BatonServerCommunicator.syncTicketData(
+					demo, token[0]);
+			for(Ticket ticket : ticketList)
+			{
+				dbaccess.InsertTicket(ticket);
+			}
+			String result = BatonServerCommunicator.REPLY_MESSAGE_TICKET_SYNC_SUCCESS;
+			return result;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			mProgress.dismiss();
+			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT)
+					.show();
+			goToMainScreen();
+		}
+		
+	}
 	/*
 	 * AsyncTask<Type1, Type2, Type3> 1.The type of information that is needed
 	 * to process the task (e.g., URLs to download) 2. The type of information
@@ -119,6 +173,13 @@ public class JoinActivity extends Activity implements OnClickListener {
 	 * code
 	 */
 	class AsyncJoinTask extends AsyncTask<String, Void, String> {
+		ProgressDialog mProgress;
+		
+		public AsyncJoinTask()
+		{
+			mProgress = new ProgressDialog(demo);
+		}
+		
 		@Override
 		protected void onPreExecute() {
 			mProgress.setMessage("Joining classroom...");
@@ -145,9 +206,8 @@ public class JoinActivity extends Activity implements OnClickListener {
 			mProgress.dismiss();
 			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT)
 					.show();
-			if (result
-					.equals(BatonServerCommunicator.REPLY_MESSAGE_LOGIN_SUCCESS)) {
-				goToMainScreen();
+			if (!result.equals(BatonServerCommunicator.REPLY_MESSAGE_LOGIN_FAIL)) {
+				loadingTicketData(result);
 			}
 		}
 	}
