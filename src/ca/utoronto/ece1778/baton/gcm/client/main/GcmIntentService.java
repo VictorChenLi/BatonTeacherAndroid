@@ -16,13 +16,18 @@
 
 package ca.utoronto.ece1778.baton.gcm.client.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import ca.utoronto.ece1778.baton.TEACHER.R;
+import ca.utoronto.ece1778.baton.database.DBAccess;
+import ca.utoronto.ece1778.baton.database.DBAccessImpl;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
+import com.baton.publiclib.model.classmanage.ClassLesson;
+import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
 import com.baton.publiclib.model.ticketmanage.Ticket;
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMBaseIntentService;
@@ -39,7 +44,8 @@ import com.google.android.gcm.GCMBaseIntentService;
 public class GcmIntentService extends GCMBaseIntentService {
 
 	private static final String TAG = "GCMIntentService";
-
+	private DBAccess dbaccess = null;
+	
 	public GcmIntentService() {
 		super(Constants.SENDER_ID);
 	}
@@ -50,6 +56,7 @@ public class GcmIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onRegistered(Context context, String registrationId) {
 		Log.i(TAG, "Device registered: regId = " + registrationId);
+		dbaccess = DBAccessImpl.getInstance(getApplicationContext());
 		/*
 		 * CommonUtilities.displayMessage(context,
 		 * "Your device registred with GCM");
@@ -82,12 +89,14 @@ public class GcmIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "onMessage called");
-  //TODO: 修改以下实现，接受并处理GCM消息，写数据库，写内存数据（用GlobalApplication），通过广播通知UI进程刷新界面
+		//TODO: 修改以下实现，接受并处理GCM消息，写数据库，写内存数据（用GlobalApplication），通过广播通知UI进程刷新界面
+		// TODO need to implement the logic after receive the notification ticket 
+		dbaccess = DBAccessImpl.getInstance(getApplicationContext());
 		String ticketType = intent.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
 		String ticketContent = intent
 				.getStringExtra(Ticket.TICKETCONTENT_WEB_STR);
 		String timeStamp = intent.getStringExtra(Ticket.TIMESTAMP_WEB_STR);
-		int uid = intent.getIntExtra(Ticket.UID_WEB_STR, 0);
+		int uid = Integer.valueOf(intent.getStringExtra(Ticket.UID_WEB_STR));
 		String loginId = intent.getStringExtra(UserProfile.LOGINID_WEB_STR);
 		Intent out = null;
 		if (ticketType.equals(Ticket.TICKET_TYPE_TALK)) {
@@ -102,6 +111,35 @@ public class GcmIntentService extends GCMBaseIntentService {
 		out.putExtra(Ticket.TIMESTAMP_WEB_STR, timeStamp);
 		out.putExtra(Ticket.UID_WEB_STR, uid);
 		out.putExtra(UserProfile.LOGINID_WEB_STR, loginId);
+		// save into the database before send broadcast to mainscreen activity
+		Ticket curTicket = dbaccess.QueryCurTicket();
+		TalkTicketForDisplay displayTicket = CommonUtilities.getTicketForDisplay(this.getApplication(), String.valueOf(uid));
+		if(curTicket!=null&&displayTicket!=null)
+		{
+			if(!curTicket.getTicketContent().equals(ticketContent))
+			{
+				curTicket.setTicketContent(ticketContent);
+				displayTicket.setParticipate_intent(ticketContent);
+			}
+			dbaccess.UpdateTicket(curTicket);
+		}
+		else
+		{
+			int lid= Integer.valueOf(CommonUtilities.getGlobalStringVar(this.getApplication(), ClassLesson.LESSONID_WEB_STR));
+			curTicket=new Ticket(uid, ticketType, ticketContent, timeStamp, lid, Ticket.TICKETSTATUS_RAISING);
+			// update the database
+			dbaccess.InsertTicket(curTicket);
+			if(null==displayTicket)
+				displayTicket = new TalkTicketForDisplay(timeStamp, loginId,uid, lid, ticketContent, 1, 0);
+			else
+			{
+				displayTicket.setParticipate_intent(ticketContent);
+				displayTicket.setParticipate_times(displayTicket.getParticipate_times()+1);
+				displayTicket.setStartTimeStamp(timeStamp);
+			}
+			// updata the memory display ticket
+			CommonUtilities.putTicketForDisplay(this.getApplication(), String.valueOf(uid), displayTicket);
+		}
 		context.sendBroadcast(out);
 	}
 

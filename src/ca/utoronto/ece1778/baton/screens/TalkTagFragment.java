@@ -1,6 +1,9 @@
 package ca.utoronto.ece1778.baton.screens;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
 
 import android.content.ClipData.Item;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import ca.utoronto.ece1778.baton.TEACHER.R;
+import ca.utoronto.ece1778.baton.util.CommonUtilities;
 
 /**
  * 
@@ -26,13 +30,10 @@ public class TalkTagFragment extends Fragment implements OnItemLongClickListener
 	 */
 	public static final String ARG_SECTION_NUMBER = "0";
 
-	public static final String INTENT_EXTRA_ITEM_STUDENT_NAME = "student_name";
-	public static final String INTENT_EXTRA_ITEM_WAIT_TIME = "wait_time";
-	public static final String INTENT_EXTRA_ITEM_PAR_TIMES = "participate_time";
-	public static final String INTENT_EXTRA_ITEM_PAR_INTENT = "participate_intent";
+	
 
 	GridView gridView;
-	ArrayList<Item> gridArray = new ArrayList<Item>();
+	List<TalkTicketForDisplay> gridArray = null;
 	GridViewAdapter gridAdapter;
 	//private final BroadcastReceiver mHandleMessageReceiver = new TicketBroadcastReceiver();
 
@@ -40,23 +41,22 @@ public class TalkTagFragment extends Fragment implements OnItemLongClickListener
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		Log.i(TAG, "onCreatView called");
+//		Intent intent = new Intent();
+//		intent.putExtra(INTENT_EXTRA_ITEM_STUDENT_NAME, "Fiona");
+//		intent.putExtra(INTENT_EXTRA_ITEM_PAR_INTENT, Ticket.TALK_INTENT_NEWIDEA_WEB_STR);
+//		intent.putExtra(INTENT_EXTRA_ITEM_PAR_TIMES, "3");
+//		intent.putExtra(INTENT_EXTRA_ITEM_WAIT_TIME, "16");
+//		gridArray.add(new Item(intent));
+
 		View rootView = inflater.inflate(R.layout.fragment_talk_tab, container,false);
-		/*Intent intent = new Intent();
-		intent.putExtra(INTENT_EXTRA_ITEM_STUDENT_NAME, "Fiona");
-		intent.putExtra(INTENT_EXTRA_ITEM_PAR_INTENT, Ticket.TALK_INTENT_NEWIDEA_WEB_STR);
-		intent.putExtra(INTENT_EXTRA_ITEM_PAR_TIMES, "3");
-		intent.putExtra(INTENT_EXTRA_ITEM_WAIT_TIME, "16");
-		
-		gridArray.add(new Item(intent));
-		
 		gridView = (GridView) rootView.findViewById(R.id.talk_tab_grid);
-		
+		gridArray = CommonUtilities.getTicketForDisplayList(getActivity());
 		gridAdapter = new GridViewAdapter(getActivity(), R.layout.talk_student_item,gridArray);
 		gridAdapter.setNotifyOnChange(true);
 		gridView.setAdapter(gridAdapter);
 		
 		
-		gridView.setOnItemLongClickListener(this);*/
+		gridView.setOnItemLongClickListener(this);
 
 		return rootView;
 	}

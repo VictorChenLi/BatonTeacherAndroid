@@ -1,6 +1,7 @@
 package ca.utoronto.ece1778.baton.database;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -16,9 +17,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 			int version) {
 		super(context, name, factory, version);
 	}
-
-	@Override
-	public void onCreate(SQLiteDatabase arg0) {
+	
+	public void resetDatabase(SQLiteDatabase arg0)
+	{
+		arg0.execSQL("DROP TABLE IF EXISTS " + TB_ticket);
 		// ´´½¨±ítbl_task
 		String strCreatParam = "CREATE TABLE IF NOT EXISTS " + TB_ticket + " ("
 				+ TID + " INTEGER PRIMARY KEY, " + Ticket.UID_DB_STR
@@ -28,7 +30,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 				+ ClassLesson.LESSONID_DB_STR + " INTEGER, "
 				+ Ticket.TICKETSTATUS_DB_STR + " VARCHAR)";
 		arg0.execSQL(strCreatParam);
+	}
 
+	@Override
+	public void onCreate(SQLiteDatabase arg0) {
+		this.resetDatabase(arg0);
 	}
 
 	@Override
@@ -36,5 +42,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		arg0.execSQL("DROP TABLE IF EXISTS " + TB_ticket);
 		onCreate(arg0);
 	}
+	
+	
 
 }

@@ -73,10 +73,8 @@ public class WelcomeActivity extends Activity {
 		// check network
 		boolean isNetworkOk = checkNetworkState();
 		if (isNetworkOk) {
-			State gprs = manager
-					.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
-			State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-					.getState();
+			State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)!=null?manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState():null;
+			State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)!=null?manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState():null;
 			if (wifi == State.CONNECTED || wifi == State.CONNECTING) {
 				Log.i("WelcomActivity","wifi connected");
 				go();

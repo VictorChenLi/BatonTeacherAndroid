@@ -6,7 +6,20 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+
+import ca.utoronto.ece1778.baton.TEACHER.R;
+import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 
 import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
 
@@ -60,7 +73,43 @@ public class CommonUtilities {
 		return parseDate.getTime();
 	}
 	
-	public static Object getGlobalStringVar(Activity context,String key)
+	public static Bitmap getRoundedCornerBitmap(Context context, int drawable_resource, int pixels) {
+		Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
+                drawable_resource);
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = pixels;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
+	
+	public static String getGlobalStringVar(Application application,String key)
+	{
+		GlobalApplication global = (GlobalApplication) application;
+		return global.getStringVar(key);
+	}
+	
+	public static void putGlobalStringVar(Application application,String key, String value)
+	{
+		GlobalApplication global = (GlobalApplication) application;
+		global.putStringVar(key, value);
+	}
+	
+	public static String getGlobalStringVar(Activity context,String key)
 	{
 		GlobalApplication global = (GlobalApplication) context.getApplication();
 		return global.getStringVar(key);
@@ -70,6 +119,42 @@ public class CommonUtilities {
 	{
 		GlobalApplication global = (GlobalApplication) context.getApplication();
 		global.putStringVar(key, value);
+	}
+	
+	public static TalkTicketForDisplay getTicketForDisplay(Activity context, String key)
+	{
+		GlobalApplication global = (GlobalApplication) context.getApplication();
+		return global.getTicketVar(key);
+	}
+	
+	public static void putTicketForDisplay(Activity context, String key, TalkTicketForDisplay ticket)
+	{
+		GlobalApplication global = (GlobalApplication) context.getApplication();
+		global.putTicketVar(key, ticket);
+	}
+	
+	public static TalkTicketForDisplay getTicketForDisplay(Application application, String key)
+	{
+		GlobalApplication global = (GlobalApplication) application;
+		return global.getTicketVar(key);
+	}
+	
+	public static void putTicketForDisplay(Application application, String key, TalkTicketForDisplay ticket)
+	{
+		GlobalApplication global = (GlobalApplication) application;
+		global.putTicketVar(key, ticket);
+	}
+	
+	public static boolean isContainKey(Activity context, String key)
+	{
+		GlobalApplication global = (GlobalApplication) context.getApplication();
+		return global.isContainKey(key);	
+	}
+	
+	public static List<TalkTicketForDisplay> getTicketForDisplayList(Activity context)
+	{
+		GlobalApplication global = (GlobalApplication) context.getApplication();
+		return global.getTicketForDisplayList();
 	}
 	
 	public static List<TalkTicketForDisplay> getGlobalTalkArrayVar(Activity context)
