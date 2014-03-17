@@ -68,8 +68,9 @@ public class MainScreenActivity extends FragmentActivity implements
 	GridViewAdapter talkGridAdapter;
 
 	// ///////////TODO: 实验用//////////////
-	String test_StartTime1="2014-03-11T02:23:00.736";
-	String test_StartTime2="2014-03-11T02:23:10.736";
+	String test_StartTime1="2014-03-12T09:18:00.736";
+	String test_StartTime2="2014-03-12T09:18:10.736";
+	int afterTime = 40;
 	long testST = CommonUtilities.getDataTime(test_StartTime1);
 	TalkTicketForDisplay test_t3 = null;
 	// ////////////////////////////
@@ -257,11 +258,11 @@ public class MainScreenActivity extends FragmentActivity implements
 		protected void onProgressUpdate(Long... curTime) {
 			super.onProgressUpdate(curTime);
 			// ///TODO 待注释 试验:过一段时间之后t_ticket4Display发生变化，UI是否能正常更新 --goes well
-			/*if (test_t3 == null && (curTime[0] - testST) > 40 * 1000) {
+			if (test_t3 == null && (curTime[0] - testST) > afterTime * 1000) {
 				test_t3 = new TalkTicketForDisplay(test_StartTime1, "Zack",
 						Ticket.TALK_INTENT_NEWIDEA_WEB_STR, "3");
 				CommonUtilities.addGlobalTalkVar(MainScreenActivity.this, test_t3);
-			}*/
+			}
 			// end///////////////////
 			
 			talkGridArray.clear();
