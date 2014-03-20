@@ -79,7 +79,7 @@ public class JoinActivity extends Activity implements OnClickListener {
 		/*in case the previous context is RegisterActivity*/
 		Intent intent = this.getIntent();
 		String email = intent.getStringExtra(UserProfile.EMAIL_WEB_STR);
-		String pwd = intent.getStringExtra(UserProfile.EMAIL_WEB_STR);
+		String pwd = intent.getStringExtra(UserProfile.PASSWORD_WEB_STR);
 		if (email != null && !email.equals("")) {
 			txtEmail.setText(email);
 		}
