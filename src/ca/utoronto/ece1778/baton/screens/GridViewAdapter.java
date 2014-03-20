@@ -84,9 +84,9 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 		} else if (item.getParticipate_intent().equals(Ticket.TALK_INTENT_BUILD_WEB_STR)) {
 			holder.imgParIntent.setImageResource(R.drawable.talk_build_xs);
 		} else if (item.getParticipate_intent().equals(Ticket.TALK_INTENT_CHALLENGE_WEB_STR)) {
-			holder.imgParIntent.setImageResource(R.drawable.talk_build_xs);
-		} else if (item.getParticipate_intent().equals(Ticket.TALK_INTENT_CHALLENGE_WEB_STR)) {
 			holder.imgParIntent.setImageResource(R.drawable.talk_challenge_s);
+		} else if (item.getParticipate_intent().equals(Ticket.TALK_INTENT_QUESTION_WEB_STR)) {
+			holder.imgParIntent.setImageResource(R.drawable.talk_question_s);
 		}
 
 		holder.txtParTime.setText(String.valueOf(item.getParticipate_times()));
