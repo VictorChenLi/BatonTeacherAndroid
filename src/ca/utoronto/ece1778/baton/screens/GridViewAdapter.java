@@ -32,7 +32,7 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 	Context context;
 	int layoutResourceId;
 	float changeRate = 255/180;
-	int colorcode=0xff00ff00;
+	int colorcode=0xff00ff00;//red£º0xffff0000
 	static final int RED_PIECE = 0x00010000;
 	static final int GREEN_PIECE=0x00000100;
 	

@@ -26,7 +26,7 @@ public class DBAccessImpl implements DBAccess {
 	
 	public static final String SELECT_TICKETS = "Select * from ticket";
 	
-	public static final String SELECT_SPEC_TICKET = "Select * from ticket where ticket_status=?";
+	public static final String SELECT_TICKET_BY_STATUS = "Select * from ticket where ticket_status=?";
 	
 	public static final String DETACT_DB = "Select * from ticket";
 	
@@ -122,7 +122,7 @@ public class DBAccessImpl implements DBAccess {
 	public Ticket QueryCurTicket() {
 		Cursor cursor=null;
 		String[] bindArgs= new String[]{Ticket.TICKETSTATUS_RAISING};
-		cursor = rdb.rawQuery(DBAccessImpl.SELECT_SPEC_TICKET,bindArgs);
+		cursor = rdb.rawQuery(DBAccessImpl.SELECT_TICKET_BY_STATUS,bindArgs);
 		List<Ticket> list = fillList(cursor);
 		return list.size()==0?null:list.get(0);
 	}
