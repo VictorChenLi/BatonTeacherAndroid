@@ -89,8 +89,7 @@ public class GcmIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "onMessage called");
-		//TODO: 修改以下实现，接受并处理GCM消息，写数据库，写内存数据（用GlobalApplication），通过广播通知UI进程刷新界面
-		// TODO need to implement the logic after receive the notification ticket 
+		//TODO: ??? 修改以下实现，接受并处理GCM消息，写数据库，写内存数据（用GlobalApplication），通过广播通知UI进程刷新界面
 		dbaccess = DBAccessImpl.getInstance(getApplicationContext());
 		String ticketType = intent.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
 		String ticketContent = intent
