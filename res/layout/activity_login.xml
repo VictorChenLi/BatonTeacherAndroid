@@ -68,12 +68,12 @@
             android:textAlignment="4" />
 
         <EditText
-            android:id="@+id/login_txtEmail"
+            android:id="@+id/login_txtLoginId"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_weight="5"
-            android:hint="Enter your email"
+            android:hint="Enter your login ID"
             android:textSize="14sp"
             android:textStyle="italic"
             android:typeface="sans" />

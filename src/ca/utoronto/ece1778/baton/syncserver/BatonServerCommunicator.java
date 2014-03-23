@@ -20,6 +20,7 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.database.DBAccess;
@@ -132,7 +133,8 @@ public class BatonServerCommunicator {
 
 		String serverUrl = Constants.SERVER_URL + "/login?";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put(UserProfile.EMAIL_WEB_STR, token[0]);
+//		params.put(UserProfile.EMAIL_WEB_STR, token[0]);
+		params.put(UserProfile.LOGINID_WEB_STR, token[0]);
 		params.put(VirtualClass.CLASSROOM_NAME_WEB_STR, token[1]);
 		params.put(UserProfile.PASSWORD_WEB_STR, token[2]);
 		params.put(UserProfile.GCMID_WEB_STR,
@@ -357,5 +359,24 @@ public class BatonServerCommunicator {
 			}
 		}
 		return POST_MESSAGE_FAIL;
+	}
+	
+	public static class UploadTicketTask extends AsyncTask<Void,Void,Void>
+	{
+		Context uicontext;
+		public UploadTicketTask(Context context)
+		{
+			uicontext=context;
+		}
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			DBAccess dbaccess = DBAccessImpl.getInstance(uicontext);
+	        if(dbaccess.DetactDatabase())
+	        {
+	    		BatonServerCommunicator.uploadTicketData(uicontext);
+	    		dbaccess.ResetDatabase();
+	        }
+			return null;
+		}
 	}
 }

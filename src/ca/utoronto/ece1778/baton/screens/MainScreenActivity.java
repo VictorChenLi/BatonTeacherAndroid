@@ -147,16 +147,6 @@ public class MainScreenActivity extends FragmentActivity implements
 		mTalkUpdateTask = new TalkWidgeUpdataTask();
 		mTalkUpdateTask.execute();
 	}
-	
-	public void syncDatabase()
-    {
-    	DBAccess dbaccess = DBAccessImpl.getInstance(getApplicationContext());
-        if(dbaccess.DetactDatabase())
-        {
-    		BatonServerCommunicator.uploadTicketData(this);
-    		dbaccess.ResetDatabase();
-        }
-    }
 
 	@Override
 	protected void onStop() {
@@ -248,7 +238,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		}
 
 	}
-
+	
 	protected class TalkWidgeUpdataTask extends AsyncTask<Void, Long, String> {
 
 		@Override
@@ -325,7 +315,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		} catch (Exception e) {
 			Log.e("UnRegister Receiver Error", "> " + e.getMessage());
 		}
-		syncDatabase();
+//		new BatonServerCommunicator.UploadTicketTask(this).execute();
 		super.onDestroy();
 	}
 

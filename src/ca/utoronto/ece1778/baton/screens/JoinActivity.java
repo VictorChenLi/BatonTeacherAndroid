@@ -53,7 +53,7 @@ public class JoinActivity extends Activity implements OnClickListener {
 
 	private JoinActivity demo;
 	// UI elements
-	EditText txtEmail;
+	EditText txtLoginId;
 	EditText txtClassroom;
 	EditText txtPassword;
 	Button btnRegister;
@@ -67,7 +67,7 @@ public class JoinActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_login);
 		dbaccess = DBAccessImpl.getInstance(getApplicationContext());
 		demo = this;
-		txtEmail = (EditText) findViewById(R.id.login_txtEmail);
+		txtLoginId = (EditText) findViewById(R.id.login_txtLoginId);
 		txtClassroom = (EditText) findViewById(R.id.login_txtClassroomName);
 		txtPassword = (EditText) findViewById(R.id.login_txtPassword);
 		btnJoin = (Button) findViewById(R.id.login_btnJoin);
@@ -78,10 +78,10 @@ public class JoinActivity extends Activity implements OnClickListener {
 
 		/*in case the previous context is RegisterActivity*/
 		Intent intent = this.getIntent();
-		String email = intent.getStringExtra(UserProfile.EMAIL_WEB_STR);
+		String loginId = intent.getStringExtra(UserProfile.LOGINID_WEB_STR);
 		String pwd = intent.getStringExtra(UserProfile.PASSWORD_WEB_STR);
-		if (email != null && !email.equals("")) {
-			txtEmail.setText(email);
+		if (loginId != null && !loginId.equals("")) {
+			txtLoginId.setText(loginId);
 		}
 		if (pwd != null && !pwd.equals("")) {
 			txtPassword.setText(pwd);
@@ -93,14 +93,14 @@ public class JoinActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.login_btnJoin:
-			String email = txtEmail.getText().toString();
+			String loginId = txtLoginId.getText().toString();
 			String classroom = txtClassroom.getText().toString();
 			String password = txtPassword.getText().toString();
 			
 			// Check if user filled the form
-			if (email.trim().length() > 0 && password.trim().length() > 0
+			if (loginId.trim().length() > 0 && password.trim().length() > 0
 					&& classroom.trim().length() > 0) {
-				new AsyncJoinTask().execute(new String[] {email,classroom,password});
+				new AsyncJoinTask().execute(new String[] {loginId,classroom,password});
 			} else {
 				alert.showAlertDialog(JoinActivity.this, "Login Error!",
 						"Please fill the form", false);
@@ -204,10 +204,14 @@ public class JoinActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(String result) {
 			mProgress.dismiss();
-			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT)
-					.show();
+			
 			if (!result.equals(BatonServerCommunicator.REPLY_MESSAGE_LOGIN_FAIL)) {
 				loadingTicketData(result);
+			}
+			else
+			{
+				Toast.makeText(getApplicationContext(), BatonServerCommunicator.REPLY_MESSAGE_LOGIN_SUCCESS, Toast.LENGTH_SHORT)
+				.show();
 			}
 		}
 	}

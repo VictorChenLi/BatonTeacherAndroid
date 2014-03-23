@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Application;
+import android.content.Context;
+import android.os.AsyncTask;
 
 import ca.utoronto.ece1778.baton.database.DBAccess;
 import ca.utoronto.ece1778.baton.database.DBAccessImpl;
@@ -104,21 +106,11 @@ public class GlobalApplication extends Application {
         mTicketsForDisplay = Collections.synchronizedMap(mTicketsForDisplay);
         
         // sync the database
-        syncDatabase();
+       	new BatonServerCommunicator.UploadTicketTask(getApplicationContext()).execute();
     }  
       
     public void onTerminate() {  
         super.onTerminate();  
         //save data of the map
     }  
-    
-    public void syncDatabase()
-    {
-    	DBAccess dbaccess = DBAccessImpl.getInstance(getApplicationContext());
-        if(dbaccess.DetactDatabase())
-        {
-    		BatonServerCommunicator.uploadTicketData(this);
-    		dbaccess.ResetDatabase();
-        }
-    }
 }
