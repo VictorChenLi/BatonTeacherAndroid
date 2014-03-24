@@ -26,7 +26,7 @@ public class DBAccessImpl implements DBAccess {
 	
 	public static final String SELECT_TICKETS = "Select * from ticket";
 	
-	public static final String SELECT_TICKET_BY_STATUS = "Select * from ticket where ticket_status=?";
+	public static final String SELECT_SPEC_TICKET = "Select * from ticket where uid=?, ticket_status=?";
 	
 	public static final String DETACT_DB = "Select * from ticket";
 	
@@ -119,12 +119,29 @@ public class DBAccessImpl implements DBAccess {
 	}
 
 	@Override
-	public Ticket QueryCurTicket() {
+	public Ticket QueryCurTicket(int uid) {
 		Cursor cursor=null;
-		String[] bindArgs= new String[]{Ticket.TICKETSTATUS_RAISING};
-		cursor = rdb.rawQuery(DBAccessImpl.SELECT_TICKET_BY_STATUS,bindArgs);
+		String[] bindArgs= new String[]{String.valueOf(uid), Ticket.TICKETSTATUS_RAISING};
+		cursor = rdb.rawQuery(DBAccessImpl.SELECT_SPEC_TICKET,bindArgs);
 		List<Ticket> list = fillList(cursor);
 		return list.size()==0?null:list.get(0);
+	}
+
+	@Override
+	public void ResponseTicket(int uid) {
+		Ticket ticket = this.QueryCurTicket(uid);
+		ticket.setTicket_status(Ticket.TICKETSTATUS_RESPOND);
+		this.UpdateTicket(ticket);
+	}
+
+	@Override
+	public void ResetAllTicket(List<Integer> uidList ) {
+		List<Ticket> ticketList = this.QueryTicketList(0);
+		for(Ticket ticket : ticketList)
+		{
+			ticket.setTicket_status(Ticket.TICKETSTATUS_DISCARD);
+			this.UpdateTicket(ticket);
+		}
 	}
 	
 	

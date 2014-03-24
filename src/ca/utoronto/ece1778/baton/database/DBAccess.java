@@ -16,9 +16,13 @@ public interface DBAccess {
 	
 	public void ReadDisplayTickets();
 	
-	public Ticket QueryCurTicket();
+	public Ticket QueryCurTicket(int uid);
 	
 	public Boolean DetactDatabase();
 	
 	public void ResetDatabase();
+	
+	public void ResponseTicket(int uid);
+
+	void ResetAllTicket(List<Integer> uidList);
 }

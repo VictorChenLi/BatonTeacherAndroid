@@ -111,7 +111,7 @@ public class GcmIntentService extends GCMBaseIntentService {
 		out.putExtra(Ticket.UID_WEB_STR, uid);
 		out.putExtra(UserProfile.LOGINID_WEB_STR, loginId);
 		// save into the database before send broadcast to mainscreen activity
-		Ticket curTicket = dbaccess.QueryCurTicket();
+		Ticket curTicket = dbaccess.QueryCurTicket(uid);
 		TalkTicketForDisplay displayTicket = CommonUtilities.getTicketForDisplay(this.getApplication(), String.valueOf(uid));
 		if(curTicket!=null&&displayTicket!=null)
 		{
