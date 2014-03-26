@@ -89,7 +89,7 @@ public class GcmIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "onMessage called");
-		//TODO: ??? 修改以下实现，接受并处理GCM消息，写数据库，写内存数据（用GlobalApplication），通过广播通知UI进程刷新界面
+		//TODO: 修改以下实现，接受并处理GCM消息，写数据库，写内存数据（用GlobalApplication），通过广播通知UI进程刷新界面
 		dbaccess = DBAccessImpl.getInstance(getApplicationContext());
 		String ticketType = intent.getStringExtra(Ticket.TICKETTYPE_WEB_STR);
 		String ticketContent = intent
@@ -111,10 +111,13 @@ public class GcmIntentService extends GCMBaseIntentService {
 		out.putExtra(Ticket.UID_WEB_STR, uid);
 		out.putExtra(UserProfile.LOGINID_WEB_STR, loginId);
 		// save into the database before send broadcast to mainscreen activity
-		Ticket curTicket = dbaccess.QueryCurTicket(uid);
+		//get the "raising" ticket from the student with this uid
+		Ticket curTicket = dbaccess.QueryRaisingTicket(uid);
+		//get the ticket icon displayed with the uid
 		TalkTicketForDisplay displayTicket = CommonUtilities.getTicketForDisplay(this.getApplication(), String.valueOf(uid));
-		if(curTicket!=null&&displayTicket!=null)
-		{
+		if(curTicket!=null)
+		{ //an existing 'raising' ticket in database (and also a ticket displayed)
+			//update the content if it is changed
 			if(!curTicket.getTicketContent().equals(ticketContent))
 			{
 				curTicket.setTicketContent(ticketContent);
@@ -123,21 +126,22 @@ public class GcmIntentService extends GCMBaseIntentService {
 			dbaccess.UpdateTicket(curTicket);
 		}
 		else
-		{
+		{ //no 'raising' ticket in database under the uid, insert a new ticket in database
 			int lid= Integer.valueOf(CommonUtilities.getGlobalStringVar(this.getApplication(), ClassLesson.LESSONID_WEB_STR));
 			curTicket=new Ticket(uid, ticketType, ticketContent, timeStamp, lid, Ticket.TICKETSTATUS_RAISING);
-			// update the database
+			// insert the ticket in database
 			dbaccess.InsertTicket(curTicket);
-			if(null==displayTicket)
+			if(null==displayTicket){
+				//if the student has never had a ticket which was displayed, then it cannot be found in TalkTicketForDisplay list. Create one 
 				displayTicket = new TalkTicketForDisplay(timeStamp, loginId,uid, lid, ticketContent, 1, 0);
+				CommonUtilities.putTicketForDisplay(this.getApplication(), String.valueOf(uid), displayTicket);
+			}
 			else
-			{
+			{  //if the student has one ticket which has been displayed, then count the participate time
 				displayTicket.setParticipate_intent(ticketContent);
-				displayTicket.setParticipate_times(displayTicket.getParticipate_times()+1);
+				displayTicket.setParticipate_times(dbaccess.QueryParticipateTime(uid, lid));
 				displayTicket.setStartTimeStamp(timeStamp);
 			}
-			// updata the memory display ticket
-			CommonUtilities.putTicketForDisplay(this.getApplication(), String.valueOf(uid), displayTicket);
 		}
 		context.sendBroadcast(out);
 	}

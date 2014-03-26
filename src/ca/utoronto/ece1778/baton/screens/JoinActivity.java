@@ -148,6 +148,7 @@ public class JoinActivity extends Activity implements OnClickListener {
 		protected String doInBackground(String... token) {
 			List<Ticket> ticketList = BatonServerCommunicator.syncTicketData(
 					demo, token[0]);
+			dbaccess.ResetDatabase();
 			for(Ticket ticket : ticketList)
 			{
 				dbaccess.InsertTicket(ticket);
@@ -159,8 +160,8 @@ public class JoinActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(String result) {
 			mProgress.dismiss();
-			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT)
-					.show();
+			/*Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT)
+					.show();*/
 			goToMainScreen();
 		}
 		

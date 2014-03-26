@@ -49,9 +49,6 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
 	ProgressDialog mProgress = null;
 
-	// Internet detector
-	InternetConnectionDetector cd;
-
 	// UI elements
 	EditText txtFirstName;
 	EditText txtLastName;
@@ -74,18 +71,6 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_register);
-
-		cd = new InternetConnectionDetector(getApplicationContext());
-
-		// Check if Internet present
-		if (!cd.isConnectingToInternet()) {
-			// Internet Connection is not present
-			alert.showAlertDialog(RegisterActivity.this,
-					"Internet Connection Error",
-					"Please connect to working Internet connection", false);
-			// stop executing code by return
-			return;
-		}
 
 		txtFirstName = (EditText) findViewById(R.id.register_txtFirstName);
 		txtLastName = (EditText) findViewById(R.id.register_txtLastName);

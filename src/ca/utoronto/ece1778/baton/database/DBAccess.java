@@ -12,11 +12,13 @@ public interface DBAccess {
 	
 	public List<Ticket> QueryTicketList(int uid);
 	
+	public int QueryParticipateTime(int uid, int lid);
+	
 	public void UpdateTicket(Ticket ticket);
 	
 	public void ReadDisplayTickets();
 	
-	public Ticket QueryCurTicket(int uid);
+	public Ticket QueryRaisingTicket(int uid);
 	
 	public Boolean DetactDatabase();
 	

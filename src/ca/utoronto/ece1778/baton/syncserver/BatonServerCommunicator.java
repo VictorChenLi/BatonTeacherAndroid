@@ -226,11 +226,16 @@ public class BatonServerCommunicator {
 		try {
 			String retStr = post(serverUrl, params);
 			String retObjStr[] = retStr.split("&");
+			System.out.println(retObjStr[0]);
+			System.out.println(retObjStr[1]);
 			ticketList = JsonHelper.deserializeList(retObjStr[0], Ticket.class);
 			// put display ticket into memory
 			List<TalkTicketForDisplay> displayTicketList = JsonHelper
 					.deserializeList(retObjStr[1], TalkTicketForDisplay.class);
+			Log.i(TAG,displayTicketList.size() + " tickets got from server");
 			for (TalkTicketForDisplay displayTicket : displayTicketList) {
+				Log.i(TAG,"ticket startTimeStamp: " + displayTicket.getStartTimeStamp());
+				Log.i(TAG,"ticket student: " + displayTicket.getStudent_name());
 				CommonUtilities.putTicketForDisplay((Activity) context,
 						String.valueOf(displayTicket.getUid()), displayTicket);
 			}

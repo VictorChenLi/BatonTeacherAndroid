@@ -26,6 +26,8 @@ public class DBAccessImpl implements DBAccess {
 	
 	public static final String SELECT_TICKETS = "Select * from ticket";
 	
+	public static final String COUNT_PARTICIPATE_TIME = "Select count(*) from ticket where uid=? and lid=?";
+	
 	public static final String SELECT_SPEC_TICKET = "Select * from ticket where uid=?, ticket_status=?";
 	
 	public static final String DETACT_DB = "Select * from ticket";
@@ -104,6 +106,23 @@ public class DBAccessImpl implements DBAccess {
 		return list;
 	}
 
+	/**
+	 * lid: lesson id
+	 * uid: user id
+	 */
+	@Override
+	public int QueryParticipateTime(int uid, int lid) {
+		Cursor cursor=null;
+		String[] bindArgs=null;
+		String sqlStr= COUNT_PARTICIPATE_TIME;
+		bindArgs = new String[]{String.valueOf(uid),String.valueOf(lid)};
+		cursor = rdb.rawQuery(sqlStr,bindArgs);
+		List<Integer> list = new ArrayList<Integer>();
+        while (cursor.moveToNext())
+        	list.add(cursor.getInt(0));
+		return list.size()==0 ? 0:list.get(0);
+	}
+
 	@Override
 	public void UpdateTicket(Ticket ticket) {
 		List<String> args  = ticket.getUserData();
@@ -119,17 +138,17 @@ public class DBAccessImpl implements DBAccess {
 	}
 
 	@Override
-	public Ticket QueryCurTicket(int uid) {
+	public Ticket QueryRaisingTicket(int uid) {
 		Cursor cursor=null;
 		String[] bindArgs= new String[]{String.valueOf(uid), Ticket.TICKETSTATUS_RAISING};
 		cursor = rdb.rawQuery(DBAccessImpl.SELECT_SPEC_TICKET,bindArgs);
 		List<Ticket> list = fillList(cursor);
-		return list.size()==0?null:list.get(0);
+		return list.size()==0 ? null:list.get(0);
 	}
 
 	@Override
 	public void ResponseTicket(int uid) {
-		Ticket ticket = this.QueryCurTicket(uid);
+		Ticket ticket = this.QueryRaisingTicket(uid);
 		ticket.setTicket_status(Ticket.TICKETSTATUS_RESPOND);
 		this.UpdateTicket(ticket);
 	}
