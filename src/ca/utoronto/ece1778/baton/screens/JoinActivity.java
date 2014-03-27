@@ -15,6 +15,7 @@
  */
 package ca.utoronto.ece1778.baton.screens;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -35,6 +36,7 @@ import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 
+import com.baton.publiclib.infrastructure.exception.ServiceException;
 import com.baton.publiclib.model.classmanage.ClassLesson;
 import com.baton.publiclib.model.ticketmanage.Ticket;
 import com.baton.publiclib.model.usermanage.UserProfile;
@@ -146,8 +148,13 @@ public class JoinActivity extends Activity implements OnClickListener {
 		
 		@Override
 		protected String doInBackground(String... token) {
-			List<Ticket> ticketList = BatonServerCommunicator.syncTicketData(
-					demo, token[0]);
+			List<Ticket> ticketList=new ArrayList<Ticket>();
+			try {
+				ticketList = BatonServerCommunicator.syncTicketData(demo, token[0]);
+			} catch (ServiceException e) {
+				Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+				e.printStackTrace();
+			}
 			dbaccess.ResetDatabase();
 			for(Ticket ticket : ticketList)
 			{
@@ -160,8 +167,7 @@ public class JoinActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(String result) {
 			mProgress.dismiss();
-			/*Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT)
-					.show();*/
+			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
 			goToMainScreen();
 		}
 		
@@ -192,9 +198,15 @@ public class JoinActivity extends Activity implements OnClickListener {
 
 		@Override
 		protected String doInBackground(String... token) {
-			String result = BatonServerCommunicator.login(
-					getApplicationContext(), token);
-			//String result = BatonServerCommunicator.REPLY_MESSAGE_LOGIN_SUCCESS;
+			String result;
+			try {
+				result = BatonServerCommunicator.login(
+						getApplicationContext(), token);
+			} catch (ServiceException e) {
+				Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+				result = BatonServerCommunicator.REPLY_MESSAGE_LOGIN_FAIL;
+				e.printStackTrace();
+			}
 			return result;
 		}
 
@@ -205,14 +217,9 @@ public class JoinActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onPostExecute(String result) {
 			mProgress.dismiss();
-			
+		
 			if (!result.equals(BatonServerCommunicator.REPLY_MESSAGE_LOGIN_FAIL)) {
 				loadingTicketData(result);
-			}
-			else
-			{
-				Toast.makeText(getApplicationContext(), BatonServerCommunicator.REPLY_MESSAGE_LOGIN_SUCCESS, Toast.LENGTH_SHORT)
-				.show();
 			}
 		}
 	}
