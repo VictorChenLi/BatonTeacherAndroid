@@ -32,6 +32,7 @@ import ca.utoronto.ece1778.baton.syncserver.BatonServerCommunicator;
 import ca.utoronto.ece1778.baton.syncserver.InternetConnectionDetector;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
 
+import com.baton.publiclib.infrastructure.exception.ServiceException;
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
 //import ca.utoronto.ece1778.baton.models.StudentProfile;
@@ -168,10 +169,15 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		@Override
 		protected String doInBackground(UserProfile... users) {
 			UserProfile u = users[0];
-			// String result =
-			// BatonServerCommunicator.REPLY_MESSAGE_REGISTER_SUCCESS;
-			String result = BatonServerCommunicator.register(
-					getApplicationContext(), u);
+			
+			String result=null;
+			try {
+				result = BatonServerCommunicator.register(
+						getApplicationContext(), u);
+			} catch (ServiceException e) {
+				e.printStackTrace();
+				result=BatonServerCommunicator.REPLY_MESSAGE_REGISTER_SUCCESS;
+			}
 			return result;
 		}
 
@@ -184,8 +190,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
 			mProgress.dismiss();
 			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT)
 					.show();
-			if (result
-					.equals(BatonServerCommunicator.REPLY_MESSAGE_REGISTER_SUCCESS)) {
+			if (result.equals(BatonServerCommunicator.REPLY_MESSAGE_REGISTER_SUCCESS)) {
 				goToJoinPage();
 			}
 		}
