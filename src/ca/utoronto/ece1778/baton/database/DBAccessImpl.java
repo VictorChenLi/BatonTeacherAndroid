@@ -3,14 +3,10 @@ package ca.utoronto.ece1778.baton.database;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import ca.utoronto.ece1778.baton.util.CommonUtilities;
-
-import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
 import com.baton.publiclib.model.ticketmanage.Ticket;
 
 public class DBAccessImpl implements DBAccess {
@@ -28,7 +24,7 @@ public class DBAccessImpl implements DBAccess {
 	
 	public static final String COUNT_PARTICIPATE_TIME = "Select count(*) from ticket where uid=? and lid=?";
 	
-	public static final String SELECT_SPEC_TICKET = "Select * from ticket where uid=?, ticket_status=?";
+	public static final String SELECT_SPEC_TICKET = "Select * from ticket where uid=? and ticket_status=?";
 	
 	public static final String DETACT_DB = "Select * from ticket";
 	

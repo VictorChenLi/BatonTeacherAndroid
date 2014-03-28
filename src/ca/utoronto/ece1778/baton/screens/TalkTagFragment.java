@@ -16,6 +16,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import ca.utoronto.ece1778.baton.TEACHER.R;
+import ca.utoronto.ece1778.baton.database.DBAccess;
+import ca.utoronto.ece1778.baton.database.DBAccessImpl;
 import ca.utoronto.ece1778.baton.util.CommonUtilities;
 
 /**
@@ -29,9 +31,9 @@ public class TalkTagFragment extends Fragment implements OnItemLongClickListener
 	 * The fragment argument representing the section number for this fragment.
 	 */
 	public static final String ARG_SECTION_NUMBER = "0";
-
+	private DBAccess dbaccess = null;
 	
-
+	View rootView;
 	GridView gridView;
 	List<TalkTicketForDisplay> gridArray = null;
 	GridViewAdapter gridAdapter;
@@ -41,14 +43,10 @@ public class TalkTagFragment extends Fragment implements OnItemLongClickListener
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		Log.i(TAG, "onCreatView called");
-//		Intent intent = new Intent();
-//		intent.putExtra(INTENT_EXTRA_ITEM_STUDENT_NAME, "Fiona");
-//		intent.putExtra(INTENT_EXTRA_ITEM_PAR_INTENT, Ticket.TALK_INTENT_NEWIDEA_WEB_STR);
-//		intent.putExtra(INTENT_EXTRA_ITEM_PAR_TIMES, "3");
-//		intent.putExtra(INTENT_EXTRA_ITEM_WAIT_TIME, "16");
-//		gridArray.add(new Item(intent));
-
-		View rootView = inflater.inflate(R.layout.fragment_talk_tab, container,false);
+		
+		dbaccess = DBAccessImpl.getInstance(getActivity().getApplicationContext());
+		
+		rootView = inflater.inflate(R.layout.fragment_talk_tab, container,false);
 		gridView = (GridView) rootView.findViewById(R.id.talk_tab_grid);
 		gridArray = CommonUtilities.getTicketForDisplayList(getActivity());
 		gridAdapter = new GridViewAdapter(getActivity(), R.layout.talk_student_item,gridArray);
@@ -62,11 +60,13 @@ public class TalkTagFragment extends Fragment implements OnItemLongClickListener
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-		Log.i("TalkTagFragment","onItemLongClick called");
-	
+		GridViewAdapter.StudentItemHolder iconInfo = (GridViewAdapter.StudentItemHolder)view.getTag();
+		int uid = iconInfo.uid;
+		//dbaccess.ResponseTicket(uid);
+		/*TalkTicketForDisplay item = gridArray.get(position);
+		((GridView)parent).removeView(view);	*/
 		return true;
 	
 	}

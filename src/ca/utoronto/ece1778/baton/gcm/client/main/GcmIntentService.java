@@ -133,10 +133,11 @@ public class GcmIntentService extends GCMBaseIntentService {
 			dbaccess.InsertTicket(curTicket);
 			if(null==displayTicket){
 				//if the student has never had a ticket which was displayed, then it cannot be found in TalkTicketForDisplay list. Create one 
-				displayTicket = new TalkTicketForDisplay(timeStamp, loginId,uid, lid, ticketContent, 1, 0);
+				displayTicket = new TalkTicketForDisplay(timeStamp, loginId,uid, lid, ticketContent,Ticket.TICKETSTATUS_RAISING, 1, 0);
 				CommonUtilities.putTicketForDisplay(this.getApplication(), String.valueOf(uid), displayTicket);
 			}
-			else
+		  else
+			  //might not be reached because un-raising ticket should not be in the display list
 			{  //if the student has one ticket which has been displayed, then count the participate time
 				displayTicket.setParticipate_intent(ticketContent);
 				displayTicket.setParticipate_times(dbaccess.QueryParticipateTime(uid, lid));

@@ -91,15 +91,17 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 
 		holder.txtParTime.setText(String.valueOf(item.getParticipate_times()));
 		holder.txtParTime.setTypeface(tf);
+		holder.uid = item.getUid();
 
 		return row;
 	}
 
 	/* Item in the talk tab grid */
-	static class StudentItemHolder {
+	public static class StudentItemHolder {
 		ImageView imgFaceOrWaitTime;// wait time
 		TextView txtName; // student name
 		ImageView imgParIntent; // participate intent
 		TextView txtParTime; // participate time
+		int uid;
 	}
 }

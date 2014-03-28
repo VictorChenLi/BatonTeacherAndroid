@@ -90,8 +90,8 @@ public class BatonServerCommunicator {
 				 * R.string.server_registering, i, MAX_ATTEMPTS));
 				 */
 				String retStr = post(serverUrl, params);
-				if(retStr.equals(POST_MESSAGE_FAIL))
-					return REPLY_MESSAGE_REGISTER_FAIL; 
+				if (retStr.equals(POST_MESSAGE_FAIL))
+					return REPLY_MESSAGE_REGISTER_FAIL;
 				GCMRegistrar.setRegisteredOnServer(context, true);
 				String message = context.getString(R.string.server_registered);
 				CommonUtilities.displayMessage(context, message);
@@ -133,7 +133,7 @@ public class BatonServerCommunicator {
 
 		String serverUrl = Constants.SERVER_URL + "/login?";
 		Map<String, String> params = new HashMap<String, String>();
-//		params.put(UserProfile.EMAIL_WEB_STR, token[0]);
+		// params.put(UserProfile.EMAIL_WEB_STR, token[0]);
 		params.put(UserProfile.LOGINID_WEB_STR, token[0]);
 		params.put(VirtualClass.CLASSROOM_NAME_WEB_STR, token[1]);
 		params.put(UserProfile.PASSWORD_WEB_STR, token[2]);
@@ -154,8 +154,8 @@ public class BatonServerCommunicator {
 				 * R.string.server_registering, i, MAX_ATTEMPTS));
 				 */
 				String retStr = post(serverUrl, params);
-				if(retStr.equals(POST_MESSAGE_FAIL))
-					return REPLY_MESSAGE_LOGIN_FAIL; 
+				if (retStr.equals(POST_MESSAGE_FAIL))
+					return REPLY_MESSAGE_LOGIN_FAIL;
 				// String message =
 				// context.getString(R.string.server_registered);
 				// CommonUtilities.displayMessage(context, message);
@@ -226,18 +226,23 @@ public class BatonServerCommunicator {
 		try {
 			String retStr = post(serverUrl, params);
 			String retObjStr[] = retStr.split("&");
-			System.out.println(retObjStr[0]);
-			System.out.println(retObjStr[1]);
+			System.out.println("DB Ticket json string: "+retObjStr[0]);
+			System.out.println("display Ticket json string: "+retObjStr[1]);
 			ticketList = JsonHelper.deserializeList(retObjStr[0], Ticket.class);
 			// put display ticket into memory
 			List<TalkTicketForDisplay> displayTicketList = JsonHelper
 					.deserializeList(retObjStr[1], TalkTicketForDisplay.class);
-			Log.i(TAG,displayTicketList.size() + " tickets got from server");
+			Log.i(TAG, displayTicketList.size() + " students got from server");
 			for (TalkTicketForDisplay displayTicket : displayTicketList) {
-				Log.i(TAG,"ticket startTimeStamp: " + displayTicket.getStartTimeStamp());
-				Log.i(TAG,"ticket student: " + displayTicket.getStudent_name());
-				CommonUtilities.putTicketForDisplay((Activity) context,
-						String.valueOf(displayTicket.getUid()), displayTicket);
+				Log.i(TAG, "ticket startTimeStamp: " + displayTicket.getStartTimeStamp());
+				Log.i(TAG, "ticket student: " + displayTicket.getStudent_name());
+				/**
+				 * modified on 27th March by Fiona, only put raising tickets in memor for display
+				 */
+				Log.i(TAG, "ticket_status:"+displayTicket.getTicket_status());
+				if (Ticket.TICKETSTATUS_RAISING.equals(displayTicket.getTicket_status()))
+					CommonUtilities
+							.putTicketForDisplay((Activity) context, String.valueOf(displayTicket.getUid()), displayTicket);
 			}
 		} catch (IOException e) {
 			String message = context.getString(R.string.server_sync_error,
@@ -256,7 +261,7 @@ public class BatonServerCommunicator {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put(Ticket.TICKET_LIST_WEB_STR, JsonHelper.serialize(ticketList));
 		try {
-			post(serverUrl, params); 
+			post(serverUrl, params);
 		} catch (IOException e) {
 			String message = context.getString(R.string.server_upload_error,
 					e.getMessage());
@@ -365,22 +370,24 @@ public class BatonServerCommunicator {
 		}
 		return POST_MESSAGE_FAIL;
 	}
-	
-	public static class UploadTicketTask extends AsyncTask<Void,Void,Void>
+
+	public static class UploadTicketTask extends AsyncTask<Void, Void, Void>
 	{
 		Context uicontext;
+
 		public UploadTicketTask(Context context)
 		{
-			uicontext=context;
+			uicontext = context;
 		}
+
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			DBAccess dbaccess = DBAccessImpl.getInstance(uicontext);
-	        if(dbaccess.DetactDatabase())
-	        {
-	    		BatonServerCommunicator.uploadTicketData(uicontext);
-	    		dbaccess.ResetDatabase();
-	        }
+			if (dbaccess.DetactDatabase())
+			{
+				BatonServerCommunicator.uploadTicketData(uicontext);
+				dbaccess.ResetDatabase();
+			}
 			return null;
 		}
 	}

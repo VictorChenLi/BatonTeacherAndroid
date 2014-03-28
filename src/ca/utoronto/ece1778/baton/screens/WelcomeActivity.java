@@ -1,5 +1,6 @@
 package ca.utoronto.ece1778.baton.screens;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import android.app.Activity;
@@ -17,10 +18,8 @@ import android.util.Log;
 import android.view.Window;
 import ca.utoronto.ece1778.baton.TEACHER.R;
 import ca.utoronto.ece1778.baton.util.AlertDialogManager;
-import ca.utoronto.ece1778.baton.util.CommonUtilities;
 import ca.utoronto.ece1778.baton.util.Constants;
 
-import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
 
 /**
@@ -100,9 +99,9 @@ public class WelcomeActivity extends Activity {
 		Log.i(TAG, "onRestoreInstanceState called");
 		super.onRestoreInstanceState(savedInstanceState);
 		if (savedInstanceState!=null && savedInstanceState.get("savedState") != null) {
-			Hashtable<String, Object> savedState = (Hashtable<String, Object>) savedInstanceState.get("savedState");
+			HashMap<String, Object> savedState = (HashMap<String, Object>) savedInstanceState.get("savedState");
 			Log.i(TAG, "Hashtable retained");
-			Object objectTask = ((Hashtable<String, Object>) savedState).get("mTask");
+			Object objectTask = savedState.get("mTask");
 			if (objectTask != null) {
 				Log.i(TAG, "mTask be retained");
 				mTask = (AsyncGCMRegTask) objectTask;
@@ -115,7 +114,7 @@ public class WelcomeActivity extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		Log.i(TAG, "onSaveInstanceState called");
-		Hashtable<String, Object> returnObject = new Hashtable<String, Object>();
+		HashMap<String, Object> returnObject = new HashMap<String, Object>();
 		if (mTask != null && !mTask.isCompleted) {
 			Log.i(TAG, "mTask is not finished while tilted, saved with mProgress");
 			mTask.setActivity(null);

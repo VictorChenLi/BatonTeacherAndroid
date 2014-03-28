@@ -70,19 +70,24 @@ public class GlobalApplication extends Application {
 		TalkTicketForDisplay[] l = null;
 		for (Map.Entry<String, TalkTicketForDisplay> entry : mTicketsForDisplay.entrySet())
 		{
-			displayTicketList.add(entry.getValue());
+			TalkTicketForDisplay t = entry.getValue();
+			/*
+			 * modified by fiona, on March 27th, only put raising ticket in display list
+			 */
+			if (Ticket.TICKETSTATUS_RAISING.equals(t.getTicket_status()))
+				displayTicketList.add(entry.getValue());
 		}
 		if (displayTicketList.size() > 0) {
-			//sort the display ticket by startTimeStamp
-			//refer to the compareTo function in TalkTicketForDisplay Class
+			// sort the display ticket by startTimeStamp
+			// refer to the compareTo function in TalkTicketForDisplay Class
 			l = new TalkTicketForDisplay[displayTicketList.size()];
 			displayTicketList.toArray(l);
 			Arrays.sort(l);
 			displayTicketList.clear();
-			for(TalkTicketForDisplay i : l){
+			for (TalkTicketForDisplay i : l) {
 				displayTicketList.add(i);
 			}
-			l=null;//free the space
+			l = null;// free the space
 		}
 		return displayTicketList;
 	}
@@ -118,8 +123,9 @@ public class GlobalApplication extends Application {
 		mWorkTicket4DispArray = Collections.synchronizedList(mWorkTicket4DispArray);
 		mTicketsForDisplay = Collections.synchronizedMap(mTicketsForDisplay);
 
-		// TODO: sync the database Âß¼­ÐèÒª¿¼ÂÇ 
-		//new BatonServerCommunicator.UploadTicketTask(getApplicationContext()).execute();
+		// TODO: sync the database Âß¼­ÐèÒª¿¼ÂÇ
+		// new
+		// BatonServerCommunicator.UploadTicketTask(getApplicationContext()).execute();
 	}
 
 	public void onTerminate() {
