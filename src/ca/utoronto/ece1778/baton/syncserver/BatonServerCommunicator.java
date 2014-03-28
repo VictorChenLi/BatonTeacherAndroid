@@ -257,7 +257,7 @@ public class BatonServerCommunicator {
 					else
 					{
 						// throw the network exception
-						throw new ServiceException(ErrorCode.Network_connection_Error_Msg,ErrorCode.Email_Not_Exist);
+						throw new ServiceException(ErrorCode.Network_connection_Error_Msg,ErrorCode.LoginId_Not_Exist);
 					}
 				} else {
 					return readHttpResponseMsg(conn);
