@@ -37,16 +37,12 @@ import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
 import com.baton.publiclib.model.ticketmanage.Ticket;
 import com.baton.publiclib.model.usermanage.UserProfile;
 import com.google.android.gcm.GCMRegistrar;
-//import ca.utoronto.ece1778.baton.models.StudentProfile;
-//import ca.utoronto.ece1778.baton.models.Ticket;
 
 /**
  * 
  * @author Yi Zhao
  * 
  */
-// TODO 为方便测试，暂时在AndroidManifest.xml中将Launcher
-// Activity设置为了MainScreenActivity，以后需要修改回去
 public class MainScreenActivity extends FragmentActivity implements
 		ActionBar.TabListener {
 	static final String TAG = "MainActivity";// name for Log
@@ -71,7 +67,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	ArrayList<Item> talkGridArray = new ArrayList<Item>();
 	GridViewAdapter talkGridAdapter;
 
-	// ///////////TODO: 实验用//////////////
+	// ///////////TODO: just for testing//////////////
 	String test_StartTime1="2014-03-12T09:18:00.736";
 	String test_StartTime2="2014-03-12T09:18:10.736";
 	int afterTime = 40;
@@ -83,8 +79,6 @@ public class MainScreenActivity extends FragmentActivity implements
 	 * talk ticket receiver: receive notification of talk ticket update from
 	 * back-end service, reload the ticket for display array
 	 */
-	// TODO: or maybe don't need a receiver? since the global array will change,
-	// anyway..
 	private final BroadcastReceiver mHandleMessageReceiver_talk = new TalkTicketBroadcastReceiver();
 
 	private TalkWidgeUpdataTask mTalkUpdateTask;
@@ -149,13 +143,6 @@ public class MainScreenActivity extends FragmentActivity implements
 		mTalkUpdateTask.execute();
 	}
 
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -210,7 +197,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 2;
+			return 1;
 		}
 
 		@Override
@@ -232,7 +219,6 @@ public class MainScreenActivity extends FragmentActivity implements
 		public void onReceive(Context context, Intent intent) {
 
 			WakeLocker.acquire(getApplicationContext());
-			// TODO:重新获取t_ticket4Display
 			t_ticket4Display = CommonUtilities.getTicketForDisplayList(MainScreenActivity.this);
 			Log.i("MainScreenActivity", "onReceive Called");
 			WakeLocker.release();

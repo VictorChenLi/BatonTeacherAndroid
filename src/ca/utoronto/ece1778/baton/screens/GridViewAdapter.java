@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.ClipData.Item;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,8 +69,8 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 		Typeface tf = Typeface.createFromAsset(context.getAssets(), Constants.TYPEFACE_ACTION_MAN_BOLD);
 		holder.txtName.setText(item.getStudent_name());
 		holder.txtName.setTypeface(tf);
-//		holder.imgFaceOrWaitTime.setBackgroundResource(R.drawable.button_face2);
-		holder.imgFaceOrWaitTime.setImageBitmap(CommonUtilities.getRoundedCornerBitmap(getContext(), R.drawable.button_face, 30));
+		//holder.imgFaceOrWaitTime.setBackgroundResource(R.drawable.button_face);
+		holder.imgFaceOrWaitTime.setImageBitmap(CommonUtilities.getRoundedCornerBitmap(getContext(), R.drawable.icon_face, 40));
 		long timeElapse = System.currentTimeMillis()-Long.valueOf(TimeHelper.getDataTime(item.getStartTimeStamp()));
 		colorcode = (int) (colorcode+(RED_PIECE-GREEN_PIECE)*changeRate*(timeElapse/1000));
 		if(colorcode>0xffff0000)
@@ -84,13 +82,14 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 		} else if (item.getParticipate_intent().equals(Ticket.TALK_INTENT_BUILD_WEB_STR)) {
 			holder.imgParIntent.setImageResource(R.drawable.talk_build_xs);
 		} else if (item.getParticipate_intent().equals(Ticket.TALK_INTENT_CHALLENGE_WEB_STR)) {
-			holder.imgParIntent.setImageResource(R.drawable.talk_challenge_s);
+			holder.imgParIntent.setImageResource(R.drawable.talk_challenge_xs);
 		} else if (item.getParticipate_intent().equals(Ticket.TALK_INTENT_QUESTION_WEB_STR)) {
-			holder.imgParIntent.setImageResource(R.drawable.talk_question_s);
+			holder.imgParIntent.setImageResource(R.drawable.talk_question_xs);
 		}
 
 		holder.txtParTime.setText(String.valueOf(item.getParticipate_times()));
 		holder.txtParTime.setTypeface(tf);
+		holder.txtParTime.setTextColor(Color.BLACK);
 		holder.uid = item.getUid();
 
 		return row;
