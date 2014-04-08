@@ -6,19 +6,17 @@
     android:layout_marginTop="15dip" >
 
     <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@drawable/icon_face"
-        android:padding="20dip" >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dip" >
 
        <!-- ca.utoronto.ece1778.baton.screens.RoundImageView -->
 
         <ImageView
             android:id="@+id/talk_face_or_wait_time"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:gravity="center_vertical"
-            android:src="@drawable/icon_face" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical" />
     </FrameLayout>
 
     <RelativeLayout

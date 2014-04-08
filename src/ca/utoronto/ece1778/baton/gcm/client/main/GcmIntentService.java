@@ -136,11 +136,14 @@ public class GcmIntentService extends GCMBaseIntentService {
 				CommonUtilities.putTicketForDisplay(this.getApplication(), String.valueOf(uid), displayTicket);
 			}
 		  else
-			  //might not be reached because un-raising ticket should not be in the display list
-			{  //if the student has one ticket which has been displayed, then count the participate time
+			{ 
+			  //it means the ticket in displayList is not raising status
+			  //if the student has one ticket in displayList, then +1 the participate time
+				displayTicket.setTicket_status(Ticket.TICKETSTATUS_RAISING);
 				displayTicket.setParticipate_intent(ticketContent);
-				displayTicket.setParticipate_times(dbaccess.QueryParticipateTime(uid, lid));
+				displayTicket.setParticipate_times(dbaccess.QueryParticipateTime(uid, lid)+1);
 				displayTicket.setStartTimeStamp(timeStamp);
+				CommonUtilities.putTicketForDisplay(this.getApplication(), String.valueOf(uid), displayTicket);
 			}
 		}
 		context.sendBroadcast(out);

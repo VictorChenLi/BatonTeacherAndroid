@@ -86,7 +86,7 @@ public class BatonServerCommunicator {
 		post(serverUrl, params);
 
 		GCMRegistrar.setRegisteredOnServer(context, true);
-		String message = context.getString(R.string.server_registered);
+		String message = BatonServerCommunicator.REPLY_MESSAGE_REGISTER_SUCCESS;
 		Log.i(TAG, "register success");
 		return message;
 	}

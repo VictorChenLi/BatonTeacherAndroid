@@ -73,6 +73,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	int afterTime = 40;
 	long testST = CommonUtilities.getDataTime(test_StartTime1);
 	TalkTicketForDisplay test_t3 = null;
+	DBAccessImpl dbaccess =null;
 	// ////////////////////////////
 
 	/**
@@ -94,6 +95,8 @@ public class MainScreenActivity extends FragmentActivity implements
 		registerReceiver(mHandleMessageReceiver_talk, new IntentFilter(
 				Constants.DISPLAY_TALK_TICKET_ACTION));
 
+		dbaccess = DBAccessImpl.getInstance(getApplicationContext());
+		
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -157,6 +160,20 @@ public class MainScreenActivity extends FragmentActivity implements
 		switch (item.getItemId()) {
 		case R.id.menu_profile:
 			return true;
+		case R.id.menu_reset_all:
+		{
+			List<Integer> uidList = new ArrayList<Integer>();
+			for(TalkTicketForDisplay ticket : CommonUtilities.getTicketForDisplayList(this))
+			{
+				uidList.add(ticket.getUid());
+				ticket.setTicket_status(Ticket.TICKETSTATUS_DISCARD);
+				CommonUtilities.putTicketForDisplay(this, String.valueOf(ticket.getUid()), ticket);
+			}
+			dbaccess.ResetAllTicket(uidList);
+			talkGridView = (GridView) mViewPager.findViewById(R.id.talk_tab_grid);
+			((GridViewAdapter)talkGridView.getAdapter()).updataDataList(CommonUtilities.getTicketForDisplayList(this));
+			return true;
+		}
 		case R.id.menu_log_out:
 			return true;
 		case R.id.menu_about:
@@ -172,24 +189,31 @@ public class MainScreenActivity extends FragmentActivity implements
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+		List<Fragment> fragmentList = null;
+		
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
+			fragmentList = new ArrayList<Fragment>();
 		}
 
 		@Override
 		public Fragment getItem(int position) {
-			Fragment fragment = null;
+			Fragment fragment=null;
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			switch (position) {
-			case 0:
-				fragment = new TalkTagFragment();
-				break;
-			case 1:
-				fragment = new WorkTagFragment();
-				break;
-
+			if(!fragmentList.isEmpty()&&null!=fragmentList.get(position))
+				fragment = fragmentList.get(position);
+			else
+			{
+				switch (position) {
+				case 0:
+					fragment = new TalkTagFragment();
+					break;
+				case 1:
+					fragment = new WorkTagFragment();
+					break;
+				}
 			}
 			return fragment;
 		}
@@ -264,6 +288,7 @@ public class MainScreenActivity extends FragmentActivity implements
 			// end///////////////////
 			
 			talkGridArray.clear();
+			t_ticket4Display = CommonUtilities.getTicketForDisplayList(MainScreenActivity.this);
 			List<TalkTicketForDisplay> presentList = new ArrayList<TalkTicketForDisplay>(t_ticket4Display);
 			talkGridAdapter = new GridViewAdapter(MainScreenActivity.this, R.layout.talk_student_item, presentList);
 			talkGridView.setAdapter(talkGridAdapter);

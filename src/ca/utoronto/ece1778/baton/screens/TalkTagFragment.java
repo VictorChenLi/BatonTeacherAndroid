@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.baton.publiclib.model.ticketmanage.TalkTicketForDisplay;
+import com.baton.publiclib.model.ticketmanage.Ticket;
 
 import android.content.ClipData.Item;
 import android.os.Bundle;
@@ -64,9 +65,11 @@ public class TalkTagFragment extends Fragment implements OnItemLongClickListener
 
 		GridViewAdapter.StudentItemHolder iconInfo = (GridViewAdapter.StudentItemHolder)view.getTag();
 		int uid = iconInfo.uid;
-		//dbaccess.ResponseTicket(uid);
-		/*TalkTicketForDisplay item = gridArray.get(position);
-		((GridView)parent).removeView(view);	*/
+		dbaccess.ResponseTicket(uid);
+		TalkTicketForDisplay item = CommonUtilities.getTicketForDisplay(getActivity(), String.valueOf(uid));
+		item.setTicket_status(Ticket.TICKETSTATUS_RESPOND);
+		CommonUtilities.putTicketForDisplay(getActivity(), String.valueOf(uid), item);
+		gridAdapter.updataDataList(CommonUtilities.getTicketForDisplayList(getActivity()));
 		return true;
 	
 	}

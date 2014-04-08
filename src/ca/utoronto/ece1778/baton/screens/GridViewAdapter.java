@@ -30,7 +30,7 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 	Context context;
 	int layoutResourceId;
 	float changeRate = 255/180;
-	int colorcode=0xff00ff00;//red£º0xffff0000
+	int green_color_code=0xff00ff00;//green color
 	static final int RED_PIECE = 0x00010000;
 	static final int GREEN_PIECE=0x00000100;
 	
@@ -42,6 +42,17 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
 		this.data = data;
+	}
+	
+	@Override
+	public int getCount() {
+		return data.size();
+	}
+
+	public void updataDataList(List<TalkTicketForDisplay> dataList)
+	{
+		this.data = dataList;
+		this.notifyDataSetChanged();
 	}
 
 	@Override
@@ -69,13 +80,16 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 		Typeface tf = Typeface.createFromAsset(context.getAssets(), Constants.TYPEFACE_ACTION_MAN_BOLD);
 		holder.txtName.setText(item.getStudent_name());
 		holder.txtName.setTypeface(tf);
+		holder.colorCode=green_color_code;
 		//holder.imgFaceOrWaitTime.setBackgroundResource(R.drawable.button_face);
-		holder.imgFaceOrWaitTime.setImageBitmap(CommonUtilities.getRoundedCornerBitmap(getContext(), R.drawable.icon_face, 40));
 		long timeElapse = System.currentTimeMillis()-Long.valueOf(TimeHelper.getDataTime(item.getStartTimeStamp()));
-		colorcode = (int) (colorcode+(RED_PIECE-GREEN_PIECE)*changeRate*(timeElapse/1000));
-		if(colorcode>0xffff0000)
-			colorcode=0xffff0000;
-		holder.imgFaceOrWaitTime.setBackgroundColor(colorcode);
+		holder.colorCode = (int) (holder.colorCode+(RED_PIECE-GREEN_PIECE)*changeRate*(timeElapse/1000));
+		if(holder.colorCode>0xffff0000)
+			holder.colorCode=0xffff0000;
+//		holder.imgFaceOrWaitTime.setBackgroundColor(colorcode);
+		// generate circle student icon
+		holder.imgFaceOrWaitTime.setImageBitmap(CommonUtilities.getRoundedCornerBitmap(getContext(),item.getStudent_name(), 100, holder.colorCode));
+		
 		
 		if (item.getParticipate_intent().equals(Ticket.TALK_INTENT_NEWIDEA_WEB_STR)) {
 			holder.imgParIntent.setImageResource(R.drawable.talk_new_idea_s);
@@ -102,5 +116,6 @@ public class GridViewAdapter extends ArrayAdapter<TalkTicketForDisplay> {
 		ImageView imgParIntent; // participate intent
 		TextView txtParTime; // participate time
 		int uid;
+		int colorCode;
 	}
 }

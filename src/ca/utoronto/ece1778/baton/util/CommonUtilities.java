@@ -8,11 +8,14 @@ import java.util.List;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -73,26 +76,31 @@ public class CommonUtilities {
 		return parseDate.getTime();
 	}
 	
-	public static Bitmap getRoundedCornerBitmap(Context context, int drawable_resource, int pixels) {
-		Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
-                drawable_resource);
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
-                .getHeight(), Config.ARGB_8888);
+	public static Bitmap getRoundedCornerBitmap(Context context,String displayName, int radius, int displayColor) {
+//		Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),
+//                drawable_resource);
+		Resources resources = context.getResources();
+		float scale = resources.getDisplayMetrics().density;
+        Bitmap output = Bitmap.createBitmap(radius*2, radius*2, Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = pixels;
+        int color = displayColor;
+        Paint paint = new Paint();
+//        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
 
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+//        paint.setTextAlign(Align.CENTER);
+//        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle((float)(radius*0.85), (float)(radius*0.9), (float)(radius*0.85), paint);
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(scale*(float)(radius*0.5));
+        String inital = displayName.substring(0, 1).toUpperCase();
+        canvas.drawText(inital, (float)(radius*0.5), (float)(radius*1.25), paint);
 
-        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
+//        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+//        canvas.drawBitmap(bitmap, rect, rect, paint);
 
         return output;
     }

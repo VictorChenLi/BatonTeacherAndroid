@@ -10,6 +10,9 @@
                     android:id="@+id/menu_profile"
                     android:title="@string/user_profile"/>
                 <item
+                    android:id="@+id/menu_reset_all"
+                    android:title="@string/reset_all"/>
+                <item
                     android:id="@+id/menu_log_out"
                     android:title="@string/log_out"/>
                 <item
